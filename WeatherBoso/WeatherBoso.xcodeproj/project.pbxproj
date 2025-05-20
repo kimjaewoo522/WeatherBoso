@@ -20,10 +20,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4C033DCB2DDC328600970DB1 /* Exceptions for "WeatherBoso" folder in "WeatherBoso" target */ = {
+		4C033EDF2DDCB49200970DB1 /* Exceptions for "WeatherBoso" folder in "WeatherBoso" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 4C033DB82DDC328400970DB1 /* WeatherBoso */;
 		};
@@ -33,7 +33,7 @@
 		4C033DBB2DDC328400970DB1 /* WeatherBoso */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				4C033DCB2DDC328600970DB1 /* Exceptions for "WeatherBoso" folder in "WeatherBoso" target */,
+				4C033EDF2DDCB49200970DB1 /* Exceptions for "WeatherBoso" folder in "WeatherBoso" target */,
 			);
 			path = WeatherBoso;
 			sourceTree = "<group>";
@@ -61,7 +61,6 @@
 			isa = PBXGroup;
 			children = (
 				4C033DBB2DDC328400970DB1 /* WeatherBoso */,
-				4C033DD72DDC331D00970DB1 /* Frameworks */,
 				4C033DBA2DDC328400970DB1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -72,13 +71,6 @@
 				4C033DB92DDC328400970DB1 /* WeatherBoso.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		4C033DD72DDC331D00970DB1 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,7 +173,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WeatherBoso/Info.plist;
+				INFOPLIST_FILE = WeatherBoso/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -208,7 +200,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WeatherBoso/Info.plist;
+				INFOPLIST_FILE = WeatherBoso/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
