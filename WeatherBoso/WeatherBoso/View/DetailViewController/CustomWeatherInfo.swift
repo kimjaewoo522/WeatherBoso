@@ -15,6 +15,7 @@ final class CustomWeatherInfoView: UIView {
     private let titleLabel = UILabel()
     private let locationStatusLabel = UILabel()
     private let tempLabel = UILabel()
+    private let imageView = UIImageView()
 
     private let headerStack = UIStackView()
     private let largeStack = UIStackView()
@@ -32,10 +33,11 @@ final class CustomWeatherInfoView: UIView {
     }
 
     // 외부에서 타이틀 색상 변경 가능
-    func setTitleColor(_ color: UIColor) {
+    func setImageTC(_ imageName: String,_ color: UIColor) {
         titleLabel.textColor = color
+        imageView.image = UIImage(named: imageName)
     }
-
+    
     private func setupUI() {
         // 스택 방향: 세로
         headerStack.axis = .vertical
@@ -48,8 +50,10 @@ final class CustomWeatherInfoView: UIView {
         // 뷰에 스택뷰들을 추가
         addSubview(headerStack)
         addSubview(largeStack)
-
+        addSubview(imageView)
         // 라벨 스타일 지정
+        imageView.contentMode = .scaleAspectFit
+        
         titleLabel.font = .boldSystemFont(ofSize: 58)
 
         locationStatusLabel.font = .systemFont(ofSize: 16)
@@ -59,6 +63,13 @@ final class CustomWeatherInfoView: UIView {
     }
 
     private func setupLayout() {
+        imageView.snp.makeConstraints {
+                $0.top.equalToSuperview().offset(150)
+            $0.trailing.equalToSuperview().inset(30)
+//            $0.leading.equalToSuperview().inset(
+                $0.width.height.equalTo(200)
+            }
+        
         headerStack.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.leading.trailing.equalToSuperview().inset(15)
@@ -95,16 +106,15 @@ final class CustomWeatherInfoView: UIView {
 
         var smallStackRow: [UIStackView] = []
 
-        for (index, item) in items.enumerated() {
-            // 하나의 데이터(title + value)를 작은 스택으로
+        for item in items {
             let smallStack = makeSmallStack(title: item.title, value: item.value)
             smallStackRow.append(smallStack)
 
-            // 2개씩 한 줄(mediumStack)로 묶기
-            if smallStackRow.count == 2 || index == items.count - 1 {
+            if smallStackRow.count == 2 {
                 let mediumStack = UIStackView(arrangedSubviews: smallStackRow)
                 mediumStack.axis = .horizontal
-                mediumStack.spacing = 106 // 좌우 간격
+                mediumStack.spacing = 106
+                mediumStack.distribution = .fillEqually
                 largeStack.addArrangedSubview(mediumStack)
                 smallStackRow.removeAll()
             }
