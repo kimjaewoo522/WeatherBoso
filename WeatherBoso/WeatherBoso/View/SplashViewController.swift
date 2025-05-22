@@ -25,10 +25,11 @@ class SplashViewController: UIViewController {
         setConstraints()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            let vc = MainViewController()
-            vc.modalPresentationStyle = .fullScreen
-            vc.modalTransitionStyle = .crossDissolve
-            self.present(vc, animated: true)
+            let mainVC = MainViewController()
+            let nav = UINavigationController(rootViewController: mainVC)
+            nav.modalPresentationStyle = .fullScreen
+            nav.modalTransitionStyle = .crossDissolve
+            self.present(nav, animated: true)
             
             
         }
