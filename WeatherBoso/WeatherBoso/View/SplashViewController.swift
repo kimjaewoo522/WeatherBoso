@@ -24,10 +24,15 @@ class SplashViewController: UIViewController {
         setupUI()
         setConstraints()
         
-        // 스플래시 뷰가 로드 된 이후 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.transitionToMain()
+            let vc = MainViewController()
+            vc.modalPresentationStyle = .fullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: true)
+            
+            
         }
+
     }
     
     private func setupUI() {
@@ -42,27 +47,5 @@ class SplashViewController: UIViewController {
         }
     }
     
-    private func transitionToMain() {
-        // MainViewController를 생성
-        let mainVC = MainViewController()
-        let nav = UINavigationController(rootViewController: mainVC)
-
-        // 현재 window 가져오기
-        if let windowScene = UIApplication.shared.connectedScenes
-            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-           let window = windowScene.windows.first {
-
-            // 전환 애니메이션
-            UIView.transition(with: window,
-                              duration: 0.4,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                window.rootViewController = nav
-            }, completion: nil)
-        }
-    }
-
+    
 }
-
-
-
