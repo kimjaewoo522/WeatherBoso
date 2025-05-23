@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct GeocodeResponse: Codable {
+    let addresses: [GeocodeAddress]
+}
+
+struct GeocodeAddress: Codable {
+    let x: String  // 경도 (longitude)
+    let y: String  // 위도 (latitude)
+}

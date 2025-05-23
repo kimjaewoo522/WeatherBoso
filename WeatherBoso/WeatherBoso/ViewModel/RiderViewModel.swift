@@ -82,3 +82,5 @@ class RiderViewModel {
         return list.min(by: {abs($0.dt - now) < abs($1.dt - now)})
     }
 }
+    
+  
