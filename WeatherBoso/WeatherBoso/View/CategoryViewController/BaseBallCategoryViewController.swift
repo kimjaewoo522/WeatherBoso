@@ -13,6 +13,8 @@ import RxCocoa
 class BaseBallCategoryViewController: UIViewController{
     
     let searchBar = SearchBar()
+    let viewModel = BaseBallViewModel()
+    let data = [BaseBallViewModel]()
     
     lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
@@ -39,6 +41,9 @@ class BaseBallCategoryViewController: UIViewController{
         
         view.backgroundColor = .white
         setConst()
+        
+        collection.delegate = self
+        collection.dataSource = self
         
     }
     
@@ -94,5 +99,24 @@ class BaseBallCategoryViewController: UIViewController{
         return UICollectionViewCompositionalLayout(section: section)
     }
     
+    
 }
 
+extension BaseBallCategoryViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.stadiumInfo.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BaseballCell.id, for: indexPath) as? BaseballCell else {
+            return.init()
+        }
+        
+        let row = indexPath.row
+        let infos = data[row]
+        cell.setData(with: viewModel.stadiumInfo[indexPath.item])
+        return cell
+    }
+    
+    
+}

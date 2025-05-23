@@ -20,7 +20,7 @@ class AnglerCategoryViewController: UIViewController{
     
     let arrow: UIButton = {
         let a = UIButton()
-        a.setImage(UIImage(systemName: "arrow.right.circle",
+        a.setImage(UIImage(systemName: "arrow.left.circle",
                            withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
         a.tintColor = .black
         return a
@@ -36,6 +36,9 @@ class AnglerCategoryViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         [collection, arrow, bosoTitle, searchBar].forEach({view.addSubview($0)})
+        
+        
+        collection.register(AnglerCell.self, forCellWithReuseIdentifier: AnglerCell.id)
         
         view.backgroundColor = .white
         setConst()
@@ -95,3 +98,4 @@ class AnglerCategoryViewController: UIViewController{
     }
     
 }
+
