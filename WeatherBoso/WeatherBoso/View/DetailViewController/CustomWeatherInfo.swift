@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 // 날씨 정보를 담는 단순한 데이터 모델 (제목 + 값)
-struct WeatherInfo {
+struct WeatherData {
     let title: String
     let value: String
 }
@@ -10,7 +10,7 @@ struct WeatherInfo {
 // 공통 UI 컴포넌트: 타이틀과 날씨 정보를 간단하게 표시하는 뷰
 // 상단에 타이틀, 위치, 상태, 온도
 // 하단에 날씨 정보들을 2개씩 묶어서 자동 배치
-final class CustomWeatherInfoView: UIView {
+ class CustomWeatherInfoView: UIView {
 
     private let titleLabel = UILabel()
     private let locationStatusLabel = UILabel()
@@ -101,7 +101,7 @@ final class CustomWeatherInfoView: UIView {
 
     // 중간 정보(WeatherInfo 리스트)를 화면에 표시
     // smallstack을 두개 묶어서 medium으로 만들어주기.
-    func updateWeatherInfo(items: [WeatherInfo]) {
+    func updateWeatherInfo(items: [WeatherData]) {
         largeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         var smallStackRow: [UIStackView] = []
@@ -122,7 +122,7 @@ final class CustomWeatherInfoView: UIView {
     }
 
     // title, value를 smallstack으로 만들어줌.
-    private func makeSmallStack(title: String, value: String) -> UIStackView {
+    func makeSmallStack(title: String, value: String) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = .systemFont(ofSize: 20, weight: .medium)

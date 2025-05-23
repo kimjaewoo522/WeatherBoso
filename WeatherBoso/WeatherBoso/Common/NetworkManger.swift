@@ -23,10 +23,12 @@ class NetworkManager {
     // Single 은 오직 한 번만 값을 뱉는 Observable 이기 때문에 서버에서 데이터를 한 번 불러올 때 적절.
     func fetch<T: Decodable>(url: URL) -> Single<T> {
         return Single.create { observer in
+            print("API 요청 시작: \(url.absoluteString)")
             let session = URLSession(configuration: .default)
             session.dataTask(with: URLRequest(url: url)) { data, response, error in
                 // error 가 있다면 Single 에 fail 방출.
                 if let error = error {
+                    print("통신 에러: \(error)")
                     observer(.failure(error))
                     return
                 }
@@ -35,16 +37,20 @@ class NetworkManager {
                 guard let data = data,
                       let response = response as? HTTPURLResponse,
                       (200..<300).contains(response.statusCode) else {
+                    print("응답 실패 혹은 상태 코드 이상")
                     observer(.failure(NetworkError.dataFetchFail))
                     return
                 }
                 
                 do {
-                    // data 를 받고 json 디코딩 과정까지 성공한다면 결과를 success 와 함께 방출.
-                    let decodedData = try JSONDecoder().decode(T.self, from: data)
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let decodedData = try decoder.decode(T.self, from: data)
+                    print("디코딩 성공")
                     observer(.success(decodedData))
                 } catch {
                     // 디코딩 실패했다면 decodingFail 방출.
+                    print("디코딩 실패")
                     observer(.failure(NetworkError.decodingFail))
                 }
             }.resume()
