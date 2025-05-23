@@ -38,12 +38,10 @@ class RiderViewModel {
             .subscribe(onSuccess: { (response: RiderResponse) in
                 //응답으로 받은 RiderRespnse.weatherInfo = [WeatherEntry] 리스트 중에서
                 // 오늘 날짜에만 해당하는것들만 필터링 하는 것 ( 3시간 간격 )
-                let today = self.filterToday(from: response.weatherInfo)
-                // weatherEntry 스트림에 방출!!!!!
-                self.weatherEntry.onNext(today)
-                 // 오늘 예보 중에서 현재 시각에 가장 가까운 예보 한개를 뽑아냄.
-                let now = self.nowWeather(from: today)
-                // 방출!!!
+                self.weatherEntry.onNext(response.list)
+                
+                let now = self.nowWeather(from: response.list)
+                
                 self.nowWeather.onNext(now)
                 
             }, onFailure: { error in
@@ -53,21 +51,21 @@ class RiderViewModel {
     }
     
     func fetchAirQuality() {
-            let urlString = "https://api.openweathermap.org/data/2.5/air_pollution?lat=\(lat)&lon=\(lon)&appid=\(apiKey)"
-            guard let url = URL(string: urlString) else {
-                airPollutionResponse.onError(NetworkError.invalidUrl)
-                return
-            }
-
-            NetworkManager.shared.fetch(url: url)
-                .subscribe(onSuccess: { (response: AirPollutionResponse) in
-                    //블로그에 정리해놓음 .first를 쓰는 이유
-                    self.airPollutionResponse.onNext(response.list.first)
-                }, onFailure: { error in
-                    self.airPollutionResponse.onError(error)
-                })
-                .disposed(by: disposeBag)
+        let urlString = "https://api.openweathermap.org/data/2.5/air_pollution?lat=\(lat)&lon=\(lon)&appid=\(apiKey)"
+        guard let url = URL(string: urlString) else {
+            airPollutionResponse.onError(NetworkError.invalidUrl)
+            return
         }
+        
+        NetworkManager.shared.fetch(url: url)
+            .subscribe(onSuccess: { (response: AirPollutionResponse) in
+                //블로그에 정리해놓음 .first를 쓰는 이유
+                self.airPollutionResponse.onNext(response.list.first)
+            }, onFailure: { error in
+                self.airPollutionResponse.onError(error)
+            })
+            .disposed(by: disposeBag)
+    }
     
     //현재 시각과 가장 가까운 예보 하나를 리턴 하는 것임.
     func nowWeather (from list: [WeatherEntry]) -> WeatherEntry? {
@@ -81,22 +79,6 @@ class RiderViewModel {
         // 그래서 비교 했을때 지금 시점과 가장 가까운 예보 1개를 리턴함.
         return list.min(by: {abs($0.dt - now) < abs($1.dt - now)})
     }
-
-    // WeatherEntry에 있는 여러 정보중에 오늘 날짜인 것만 필터링 되는 함수.
-    private func filterToday(from list: [WeatherEntry]) -> [WeatherEntry] {
-        // 현재 사용중인 달력 시스템
-        let calendar = Calendar.current
-        // 현재 시각
-        let today = Date()
-        //filter 함수는 { 조건 } 안에 맞는 요소만 추려냄.
-        return list.filter {
-            //date 상수는 이제..
-            // WeatherEntry는 TimeInterval을 갖고 있음. 이게 ex) 1747839600
-            // 그럼 이걸 Date객체를 이용해 2025-05-01 00:00:00 이런식으로 변환해줌
-            let date = Date(timeIntervalSince1970: $0.dt)
-            // 그럼 이제 Calender안에 있는 데이터가 Today안에 있는 데이터가 같은지 확인하고 같으면 필터 통과하고
-            // 다르면 제거됌
-            return calendar.isDate(date, inSameDayAs: today)
-        }
-    }
 }
+    
+  
