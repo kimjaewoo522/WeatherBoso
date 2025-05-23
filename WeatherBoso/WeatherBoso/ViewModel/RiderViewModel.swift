@@ -5,6 +5,7 @@
 //  Created by 김재우 on 5/20/25.
 //
 
+
 import Foundation
 import RxSwift
 
@@ -14,9 +15,9 @@ class RiderViewModel {
     //메모리 정리용 disposeBag
     private let disposeBag = DisposeBag()
     //latitude 위도
-    private var lat = 37.5665
+    private var lat = 33.348885
     //longitude 경도
-    private var lon = 126.9780
+    private var lon = 126.280975
     
     //날씨 예보를 담는 Rx subject
     let weatherEntry = BehaviorSubject<[WeatherEntry]?>(value: nil)
