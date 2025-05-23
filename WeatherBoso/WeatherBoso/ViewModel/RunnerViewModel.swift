@@ -17,7 +17,7 @@ final class RunnerViewModel {
     private init() {}
 
     func fetchCoordinates(for query: String) -> Single<(latitude: String, longitude: String)> {
-// 주소 문자열을 URL-safe하게 인코딩합니다 (예: 공백 → %20).
+// 주소 문자열을 URL-safe하게 인코딩합니다 (예: 공백 → %20)
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "https://maps.apigw.ntruss.com/map-geocode/v2/geocode?query=\(encodedQuery)") else {
             return .error(GeocodingNetworkError.invalidUrl)

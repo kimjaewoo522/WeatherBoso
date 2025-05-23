@@ -81,22 +81,4 @@ class RiderViewModel {
     }
 }
     
-    // WeatherEntry에 있는 여러 정보중에 오늘 날짜인 것만 필터링 되는 함수.
-//    private func filterToday(from list: [WeatherEntry]) -> [WeatherEntry] {
-//        // 현재 사용중인 달력 시스템
-//        let calendar = Calendar.current
-//        // 현재 시각
-//        let today = Date()
-//        //filter 함수는 { 조건 } 안에 맞는 요소만 추려냄.
-//        return list.filter {
-//            //date 상수는 이제..
-//            // WeatherEntry는 TimeInterval을 갖고 있음. 이게 ex) 1747839600
-//            // 그럼 이걸 Date객체를 이용해 2025-05-01 00:00:00 이런식으로 변환해줌
-//            let utcDate = Date(timeIntervalSince1970: $0.dt)
-//            let localDate = utcDate.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT(for: utcDate)))
-//            // 그럼 이제 Calender안에 있는 데이터가 Today안에 있는 데이터가 같은지 확인하고 같으면 필터 통과하고
-//            // 다르면 제거됌
-//            return calendar.isDate(localDate, inSameDayAs: today)
-//        }
-//    }
-//}
+  
