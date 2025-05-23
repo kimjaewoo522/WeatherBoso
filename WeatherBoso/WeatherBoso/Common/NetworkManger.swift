@@ -44,13 +44,10 @@ class NetworkManager {
                 
                 do {
                     let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let decodedData = try decoder.decode(T.self, from: data)
-                    print("디코딩 성공")
                     observer(.success(decodedData))
                 } catch {
                     // 디코딩 실패했다면 decodingFail 방출.
-                    print("디코딩 실패")
                     observer(.failure(NetworkError.decodingFail))
                 }
             }.resume()

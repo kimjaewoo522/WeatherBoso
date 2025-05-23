@@ -45,9 +45,12 @@ struct AQI: Decodable {
 }
 
 struct AirComponents: Decodable {
-    let pm25: Double? // 초-미세먼지
-    let pm10: Double? // 미세먼지
+    let pm25: Double // 초-미세먼지
+    let pm10: Double // 미세먼지
     
+    
+    //
+    // 정보가 들어올때는 pm25였는데 코딩키로 pm2_5로 바꿔가지고
     enum CodingKeys: String, CodingKey {
         case pm25 = "pm2_5"
         case pm10
