@@ -62,7 +62,6 @@ class RiderViewModel {
             .subscribe(onSuccess: { (response: AirPollutionResponse) in
                 //블로그에 정리해놓음 .first를 쓰는 이유
                 self.airPollutionResponse.onNext(response.list.first)
-                print("대기질 전체 응답: \(response)")
             }, onFailure: { error in
                 self.airPollutionResponse.onError(error)
             })
