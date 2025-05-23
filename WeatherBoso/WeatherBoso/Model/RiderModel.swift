@@ -48,8 +48,9 @@ struct AQI: Decodable {
 }
 
 struct AirComponents: Decodable {
-    let pm25: Double? // 초-미세먼지
-    let pm10: Double? // 미세먼지
+    let pm25: Double // 초-미세먼지
+    let pm10: Double // 미세먼지
+
     
     enum CodingKeys: String, CodingKey {
         case pm25 = "pm2_5"
