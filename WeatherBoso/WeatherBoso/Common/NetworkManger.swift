@@ -21,11 +21,11 @@ class NetworkManager {
     
     // 네트워크 로직을 수행하고, 결과를 Single 로 리턴함.
     // Single 은 오직 한 번만 값을 뱉는 Observable 이기 때문에 서버에서 데이터를 한 번 불러올 때 적절.
-    func fetch<T: Decodable>(url: URL) -> Single<T> {
+    func fetch<T: Decodable>(url: URL, lat: String, lon: String) -> Single<T> {
         return Single.create { observer in
             let session = URLSession(configuration: .default)
             session.dataTask(with: URLRequest(url: url)) { data, response, error in
-                // error 가 있다면 Single 에 fail 방출.
+                // error WeatherResponse가 있다면 Single 에 fail 방출.
                 if let error = error {
                     observer(.failure(error))
                     return

@@ -13,7 +13,8 @@ import RxCocoa
 final class BaseBallCategoryViewController: UIViewController{
     
     private let searchBar = SearchBar()
-    
+    private let viewModel = BaseBallViewModel()
+    private var data: [StadiumModel] = []
     private let disposeBag = DisposeBag()
     lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
@@ -41,6 +42,8 @@ final class BaseBallCategoryViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.data = viewModel.stadiumInfo
         [collection, searchBar, customNavBar].forEach { view.addSubview($0) }
         customNavBar.addSubview(backButton)
         view.backgroundColor = .white
@@ -51,6 +54,7 @@ final class BaseBallCategoryViewController: UIViewController{
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        bind()
         
     }
     
@@ -107,7 +111,15 @@ final class BaseBallCategoryViewController: UIViewController{
         return UICollectionViewCompositionalLayout(section: section)
     }
     
-    
+    private func bind() {
+        viewModel.fiveDaysInfo
+            .bind(to: collection.rx.items(
+                cellIdentifier: BaseballCell.id,
+                cellType: BaseballCell.self)
+            ) { row, item, cell in
+                cell.setData(with: item)
+            }.disposed(by: disposeBag)
+    }
 }
 
 extension BaseBallCategoryViewController: UICollectionViewDelegate, UICollectionViewDataSource {

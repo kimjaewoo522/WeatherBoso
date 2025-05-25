@@ -12,8 +12,8 @@ struct StadiumModel {
     let teamLogo: String
     let lat: String
     let lon: String
-    let temp: String?
-    let description: String?
+    var temp: String?
+    var description: String?
 }
 
 struct WeatherResponse: Decodable {
