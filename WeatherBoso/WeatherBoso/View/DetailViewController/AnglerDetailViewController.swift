@@ -18,7 +18,8 @@ final class AnglerDetailViewController: UIViewController {
         formatter.dateFormat = "yyyyMMdd"
         let todayString = formatter.string(from: Date())
         //군산 기준으로 fetch
-        viewModel.fetch(for: "DT_0018", date: todayString)
+        viewModel.fetch(obsCode: "DT_0018", date: todayString)
+        viewModel.fetchForecast(lat: 35.97, lon: 126.71)
     }
 
     private func setupUI() {
@@ -65,14 +66,11 @@ final class AnglerDetailViewController: UIViewController {
         })
         .disposed(by: disposeBag)
 
-        // 하단 시간별 날씨 정보는 더미 데이터 사용
-        let dummyTimeInfo: [TimeWeatherInfo] = [
-            .init(time: "06:00", image: "SunImage", value: "23º"),
-            .init(time: "09:00", image: "SunImage2", value: "25º"),
-            .init(time: "12:00", image: "CloudImage", value: "26º"),
-            .init(time: "15:00", image: "RainImage", value: "24º"),
-            .init(time: "18:00", image: "RainImage", value: "22º")
-        ]
-        weatherInfoView.makeTimeStack(data: dummyTimeInfo)
+        viewModel.hourlyForecast
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] forecast in
+                self?.weatherInfoView.makeTimeStack(data: forecast)
+            })
+            .disposed(by: disposeBag)
     }
 }
