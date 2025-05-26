@@ -12,9 +12,9 @@ final class AnglerDetailViewModel {
     let waterTemp = BehaviorRelay<String>(value: "-")
     let windSpeed = BehaviorRelay<String>(value: "-")
     let locationName = BehaviorRelay<String>(value: "-")
+    let hourlyForecast = PublishRelay<[TimeWeatherInfo]>()
     
-    
-    func fetch(for obsCode: String, date: String) {
+    func fetch(obsCode: String, date: String) {
         fetchTide(obsCode: obsCode, date: date)
         fetchTemp(obsCode: obsCode, date: date)
         fetchWind(obsCode: obsCode, date: date)
@@ -26,7 +26,6 @@ final class AnglerDetailViewModel {
             ) else { return }
             NetworkManager.shared.fetch(url: url)
                 .subscribe(onSuccess: { (response: TideResponse) in
-                    print("조석 관련 응답 개수:", response.result.data.count)
                     response.result.data.forEach {
                         print("시간: \($0.tphTime), hlCode: \($0.hlCode)")
                     }
@@ -39,14 +38,12 @@ final class AnglerDetailViewModel {
                     outputFormatter.dateFormat = "HH:mm"
 
                     let highs = data.filter { $0.hlCode == "고조" }
-                        .prefix(2)
                         .compactMap { item -> String? in
                             guard let date = dateFormatter.date(from: item.tphTime) else { return nil }
                             return outputFormatter.string(from: date)
                         }
 
                     let lows = data.filter { $0.hlCode == "저조" }
-                        .prefix(2)
                         .compactMap { item -> String? in
                             guard let date = dateFormatter.date(from: item.tphTime) else { return nil }
                             return outputFormatter.string(from: date)
@@ -84,7 +81,7 @@ final class AnglerDetailViewModel {
             }, onFailure: { error in
                 print("수온 fetch 오류발생", error)
                         URLSession.shared.dataTask(with: url) { data, _, _ in
-                            if let data = data { return }
+                            if data != nil { return }
                         }.resume()
                     })
             .disposed(by: disposeBag)
@@ -115,5 +112,33 @@ final class AnglerDetailViewModel {
             })
             .disposed(by: disposeBag)
     }
-
+    func fetchForecast(lat: Double, lon: Double) {
+            let apiKey = "8b75ef2c71a36b9d2f481894ddda0ded"
+            let urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric&lang=kr"
+            guard let url = URL(string: urlString) else { return }
+            
+            NetworkManager.shared.fetch(url: url)
+                .subscribe(onSuccess: { (response: RiderResponse) in
+                    // API 기준으로 최근 5개의 정보 가져옴
+                    let list = response.list.prefix(5)
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "HH:mm"
+                    
+                    let infos = list.map { entry in
+                        let time = formatter.string(from: Date(timeIntervalSince1970: entry.dt))
+                        let iconCode = entry.weather.first?.icon ?? "01d"
+                        let temp = "\(Int(entry.main.temp))º"
+                        
+                        return TimeWeatherInfo(
+                            time: time,
+                            imageSource: .url(iconCode: iconCode),
+                            value: temp
+                        )
+                    }
+                    self.hourlyForecast.accept(infos)
+                }, onFailure: {
+                    print("예보 fetch 오류:", $0)
+                })
+                .disposed(by: disposeBag)
+        }
 }
