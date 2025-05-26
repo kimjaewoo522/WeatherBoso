@@ -48,7 +48,7 @@ final class SurferDetailViewController: UIViewController {
     }
 
     private func updateUI(with weather: SurferWeather) {
-        customWeatherInfo.updateWeatherHeader(
+        customWeatherInfo.makeHeaderStack(
             title: "파도보소",
             location: beachName,
             temperature: "\(weather.temperature)°C",
@@ -70,11 +70,35 @@ final class SurferDetailViewController: UIViewController {
         
         customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1))
         
-        customWeatherInfo.updateWeatherInfo(items: [
+        customWeatherInfo.makeLargeStack(items: [
             WeatherData(title: "파도", value: "\(weather.waveHeight)m"),
             WeatherData(title: "바람", value: "\(weather.windSpeed)m/s"),
             WeatherData(title: "일출", value: weather.sunrise.first?.split(separator: "T").last.map(String.init) ?? "-"),
             WeatherData(title: "일몰", value: weather.sunset.first?.split(separator: "T").last.map(String.init) ?? "-")
         ])
+        
+        let hourlyWaveHeight = Array(weather.hourlyWaveHeight.prefix(4))
+        let startHour = 0
+        let waveTimeData: [TimeWeatherInfo] = hourlyWaveHeight.enumerated().map { index, height in
+            let hour = startHour + index * 6
+            let timeString = String(format: "%02d:00", hour)
+            
+            let waveImage: String
+            switch height {
+            case ..<0.5:
+                waveImage = "Surfing3"
+            case 0.5..<1.2:
+                waveImage = "Surfing"
+            case 1.2...:
+                waveImage = "Surfing2"
+            default:
+                waveImage = "Surfing"
+            }
+            
+            return TimeWeatherInfo(time: timeString, image: waveImage, value: "\(height)m")
+        }
+                                     
+        
+        customWeatherInfo.makeTimeStack(data: waveTimeData)
     }
 }
