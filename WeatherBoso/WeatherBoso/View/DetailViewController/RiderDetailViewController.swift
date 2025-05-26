@@ -15,8 +15,10 @@ class RiderDetailViewController: UIViewController {
     private let customWeatherInfo = CustomWeatherInfoView()
     private let viewModel = RiderViewModel()
     private var nowWeather: WeatherEntry?
+    private var weatherInfo: WeatherInfo?
     private let disposeBag = DisposeBag()
     private var airPolluiton: AirPollutionData?
+    private var selectedLocationName: String = "부산" // 기본값
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +27,6 @@ class RiderDetailViewController: UIViewController {
         bind()
         viewModel.fecthWeatherInfo()
         viewModel.fetchAirQuality()
-        //        setupContent()
     }
     
     private func bind() {
@@ -38,39 +39,41 @@ class RiderDetailViewController: UIViewController {
             .subscribe(onNext: { [weak self] weather, air in
                 guard let self = self else { return }
                 self.nowWeather = weather
-                self.customWeatherInfo.updateWeatherHeader(
+                self.customWeatherInfo.makeHeaderStack(
                     title: "달려보소",
-                    location: "부산",
+                    location: self.selectedLocationName,
                     temperature: "\(Int(weather.main.temp))°",
                     status: weather.weather.first?.description ?? "이야 맑다"
                 )
                 
-                let pm10Value = Int(air.components.pm10)
-                let pm25Value = Int(air.components.pm25)
+                let pm10Value = Int(air.components.pm10 ?? 0)
+                let pm25Value = Int(air.components.pm25 ?? 0)
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
+                let weatherStatusValue = String(weatherInfo?.main ?? "")
+                let weatherStatus = self.WeatherStatus(for: weatherStatusValue, type: .main)
                 
                 print("대기질 components 확인: \(air.components)")
-                self.customWeatherInfo.updateWeatherInfo(items: [
+                self.customWeatherInfo.makeLargeStack (items: [
                     WeatherData(title: "가시거리", value: "\((weather.visibility) / 1000 )km"),
-                    WeatherData(title: "풍속", value: "\(weather.wind.speed) m/s"),
+                    WeatherData(title: "풍속", value: String(format: "%.1f m/s", weather.wind.speed)),
                     WeatherData(title: "미세먼지", value: "\(pm10)"),
                     WeatherData(title: "초미세먼지", value: "\(pm25)")
                 ])
+                customWeatherInfo.setImageTC("\(weatherStatus)", .blue)
             }, onError: { error in
                 print("에러 발생: \(error)")
             })
             .disposed(by: disposeBag)
         
-        customWeatherInfo.setImageTC("Riding2", .blue)
+       
     }
     
     private enum DustType {
         case pm10, pm25
     }
     private enum WeatherType {
-        case sunny
-        case rainy
+        case main
     }
     
     private func airQualityStatus(for value: Int, type: DustType) -> String {
@@ -92,6 +95,36 @@ class RiderDetailViewController: UIViewController {
         }
     }
     
+    private func WeatherStatus(for value: String, type: WeatherType) -> String {
+            switch type {
+            case .main:
+                switch value {
+                case "Thunderstorm": return "Riding2"
+                case "Drizzle": return "Riding2"
+                case "Rain": return "Riding2"
+                case "Snow": return "Riding3"
+                case "Atmosphere": return "Riding2"
+                default: return "Bike"
+                }
+//                •    “맑음”
+//                •    “구름 조금”
+//                •    “흐림”
+//                •    “약한 비”
+//                •    “비”
+//                •    “강한 비”
+//                •    “눈”
+//                •    “소나기”
+//                •    “안개”
+//                •    “황사”
+//                •    “연무”
+//                •    “박무”
+//                •    “천둥번개”
+                //Bike 기본
+                //Riding2 비
+                //Riding3 눈
+            }
+        }
+    
     
     //MARK: - UI구성
     private func setupUI() {
@@ -101,5 +134,11 @@ class RiderDetailViewController: UIViewController {
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
+    }
+    
+    //MARK: - 위치 관련
+    func setLocation(lat: Double, lon: Double, locationName: String) {
+        selectedLocationName = locationName
+        viewModel.updateLocation(lat: lat, lon: lon)
     }
 }
