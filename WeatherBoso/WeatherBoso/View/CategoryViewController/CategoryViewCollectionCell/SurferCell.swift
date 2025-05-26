@@ -72,7 +72,7 @@ class SurferCell: UICollectionViewCell {
     func configure(with beach: Beach) {
         locabg.image = UIImage(named: beach.imageName)
         locaName.text = beach.name
-        tempLabel.text = beach.temperature
+        tempLabel.text = "\(beach.temperature)°C"
         statusLabel.text = beach.weatherStatus
     }
     

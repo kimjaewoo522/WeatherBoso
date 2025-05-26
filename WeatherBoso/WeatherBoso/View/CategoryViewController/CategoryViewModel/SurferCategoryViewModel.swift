@@ -24,6 +24,7 @@ final class SurferCategoryViewModel {
         BeachLocation(name: "설악해변", imageName: "Yangyang2", lat: 38.13, lon: 128.79),
         BeachLocation(name: "월포해변", imageName: "Yangyang3", lat: 36.21, lon: 129.46),
         BeachLocation(name: "만리포해변", imageName: "Yangyang4", lat: 36.79, lon: 126.13)
+        
 
 
     ]

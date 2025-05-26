@@ -18,7 +18,6 @@ final class SurferDetailViewController: UIViewController {
         self.beachName = name
         self.viewModel = SurferDetailViewModel(latitude: latitude, longitude: longitude)
         super.init(nibName: nil, bundle: nil)
-
     }
 
     required init?(coder: NSCoder) {

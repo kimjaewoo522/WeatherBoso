@@ -55,6 +55,7 @@ final class SurferCategoryViewController: UIViewController {
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        
     }
 
     private func bindCellTap() {
