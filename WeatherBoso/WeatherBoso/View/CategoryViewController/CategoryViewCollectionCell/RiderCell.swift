@@ -70,8 +70,5 @@ class RiderCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().inset(9)
         }
     }
-    
-    
-    
 }
 

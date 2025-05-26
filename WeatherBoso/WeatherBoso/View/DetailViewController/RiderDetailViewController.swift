@@ -38,7 +38,7 @@ class RiderDetailViewController: UIViewController {
             .subscribe(onNext: { [weak self] weather, air in
                 guard let self = self else { return }
                 self.nowWeather = weather
-                self.customWeatherInfo.updateWeatherHeader(
+                self.customWeatherInfo.makeHeaderStack(
                     title: "달려보소",
                     location: "부산",
                     temperature: "\(Int(weather.main.temp))°",
@@ -51,7 +51,7 @@ class RiderDetailViewController: UIViewController {
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
                 
                 print("대기질 components 확인: \(air.components)")
-                self.customWeatherInfo.updateWeatherInfo(items: [
+                self.customWeatherInfo.makeLargeStack(items: [
                     WeatherData(title: "가시거리", value: "\((weather.visibility) / 1000 )km"),
                     WeatherData(title: "풍속", value: "\(weather.wind.speed) m/s"),
                     WeatherData(title: "미세먼지", value: "\(pm10)"),

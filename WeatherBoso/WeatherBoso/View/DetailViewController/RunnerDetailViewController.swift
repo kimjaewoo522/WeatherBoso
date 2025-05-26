@@ -1,10 +1,3 @@
-//
-//  RunnerView.swift
-//  WeatherBoso
-//
-//  Created by 김재우 on 5/20/25.
-//
-
 import UIKit
 import SnapKit
 import RxSwift
@@ -40,11 +33,33 @@ final class RunnerDetailViewController: UIViewController {
         Observable
             .combineLatest(viewModel.nowWeather.compactMap { $0 }, viewModel.airPollutionResponse.compactMap { $0 })
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] weather, air in
-                guard let self = self else { return }
+            .subscribe(onNext: { [weak self] (weather: WeatherEntry, air: AirPollutionData) in
+                            guard let self = self else { return }
+                            let air = air
 
-                self.weatherInfoView.setImageTC("Running4", .black)
-                self.weatherInfoView.updateWeatherHeader(
+                let temp = weather.main.temp
+                let imageName: String
+                if let mainCondition = weather.weather.first?.main {
+                    if mainCondition.lowercased() == "Rain" {
+                        imageName = "Running4"
+                    } else {
+                        switch temp {
+                        case ..<18:
+                            imageName = "Running3"
+                        case 18..<30:
+                            imageName = "Running"
+                        default:
+                            imageName = "Running2"
+                        }
+                    }
+                } else {
+                    // 날씨 정보가 없을 경우 기본 이미지
+                    imageName = "Running"
+                }
+
+                self.weatherInfoView.setImageTC(imageName, .black)
+                
+                self.weatherInfoView.makeHeaderStack(
                     title: "뛰어 보소",
                     location: "서울특별시",
                     temperature: "\(Int(weather.main.temp))℃",
@@ -54,8 +69,8 @@ final class RunnerDetailViewController: UIViewController {
                 let humidity = "\(weather.main.humidity)%"
                 let windSpeed = "\(weather.wind.speed)m/s"
                 
-                let pm10Value = Int(air.components.pm10 ?? 0)
-                let pm25Value = Int(air.components.pm25 ?? 0)
+                let pm10Value = Int(air.components.pm10)
+                let pm25Value = Int(air.components.pm25)
 
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
@@ -67,7 +82,7 @@ final class RunnerDetailViewController: UIViewController {
                     WeatherData(title: "초미세먼지", value: pm25)
                 ]
 
-                self.weatherInfoView.updateWeatherInfo(items: weatherDataList)
+                self.weatherInfoView.makeLargeStack(items: weatherDataList)
             })
             .disposed(by: disposeBag)
     }
