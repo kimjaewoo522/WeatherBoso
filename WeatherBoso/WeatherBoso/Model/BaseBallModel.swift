@@ -1,44 +1,20 @@
-//
-//  BaseBallModel.swift
-//  WeatherBoso
-//
-//  Created by 김재우 on 5/20/25.
-//
-
-import Foundation
 
 struct StadiumModel {
     let stadiumName: String
     let teamLogo: String
-    let lat: String
-    let lon: String
+    let lat: Double
+    let lon: Double
     var temp: String?
     var description: String?
 }
 
 struct WeatherResponse: Decodable {
-    let dt: Int
-    let list: [List]
-//    let city: City
-}
-
-struct List: Decodable {
-    
-    let dt: Int
-    let main: Main
     let weather: [Weather]
-    let clouds: Clouds
-    let wind: Wind
-    let rain: Rain
-    
-    enum CodingKeys: String, CodingKey {
-        case dt
-        case main
-        case weather
-        case clouds
-        case wind
-        case rain
-    }
+    let main: Main
+    let clouds: Clouds?
+    let wind: Wind?
+    let rain: Rain?
+    let dt: Int
 }
 
 struct Weather: Codable {
@@ -48,16 +24,16 @@ struct Weather: Codable {
 struct Main: Decodable {
     let temp: Double
     let humidity: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case temp
         case humidity
     }
-    
 }
 
 struct Rain: Codable {
-    let the3H: Double
+    let the3H: Double?
+
     enum CodingKeys: String, CodingKey {
         case the3H = "3h"
     }
@@ -66,9 +42,14 @@ struct Rain: Codable {
 struct Wind: Codable {
     let speed: Double
     let deg: Int
-    let gust: Double
+    let gust: Double?
 }
 
 struct Clouds: Codable {
     let all: Int
+}
+extension StadiumModel {
+    static var empty: StadiumModel {
+        StadiumModel(stadiumName: "", teamLogo: "", lat: 0.0, lon: 0.0)
+    }
 }

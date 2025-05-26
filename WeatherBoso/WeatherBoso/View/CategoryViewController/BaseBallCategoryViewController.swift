@@ -49,13 +49,14 @@ final class BaseBallCategoryViewController: UIViewController{
         view.backgroundColor = .white
         setConst()
         
+        collection.register(BaseballCell.self, forCellWithReuseIdentifier: BaseballCell.id)
         backButton.rx.tap
             .bind { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
         bind()
-        
+        viewModel.fetchAllStadiumWeather()
     }
     
     private func setConst() {
@@ -79,7 +80,8 @@ final class BaseBallCategoryViewController: UIViewController{
         
         collection.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(27)
-            $0.leading.trailing.equalToSuperview().inset(23)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(100)
         }
         
     }
@@ -93,12 +95,12 @@ final class BaseBallCategoryViewController: UIViewController{
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = .init(
-            top: 0, leading: 0,
-            bottom: 23, trailing: 0)
+            top: 10, leading: 7,
+            bottom: 13, trailing: 7)
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(90)
+            heightDimension: .estimated(110)
         )
         
         let group = NSCollectionLayoutGroup.vertical(
@@ -112,31 +114,15 @@ final class BaseBallCategoryViewController: UIViewController{
     }
     
     private func bind() {
-        viewModel.fiveDaysInfo
+        viewModel.weatherPerDay
             .bind(to: collection.rx.items(
                 cellIdentifier: BaseballCell.id,
-                cellType: BaseballCell.self)
-            ) { row, item, cell in
-                cell.setData(with: item)
-            }.disposed(by: disposeBag)
+                cellType: BaseballCell.self
+            )) { index, model, cell in
+                cell.setData(with: model)
+            }
+            .disposed(by: disposeBag)
+
     }
 }
 
-extension BaseBallCategoryViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.stadiumInfo.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BaseballCell.id, for: indexPath) as? BaseballCell else {
-            return.init()
-        }
-        
-        let row = indexPath.row
-        let infos = data[row]
-        cell.setData(with: viewModel.stadiumInfo[indexPath.item])
-        return cell
-    }
-    
-    
-}

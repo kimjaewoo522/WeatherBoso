@@ -42,6 +42,11 @@ class BaseballCell: UICollectionViewCell {
         
         [locabg, locaName, tempLabel, statusLabel].forEach(
             {contentView.addSubview($0)})
+//        contentView.backgroundColor = .red
+        contentView.layer.cornerRadius = 15
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.black.cgColor
+        
         setConst()
     }
     
@@ -80,6 +85,5 @@ class BaseballCell: UICollectionViewCell {
         tempLabel.text = location.temp ?? ""
         statusLabel.text = location.description ?? ""
     }
-    
     
 }
