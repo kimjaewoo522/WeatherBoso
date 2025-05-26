@@ -7,11 +7,17 @@ struct WeatherData {
     let value: String
 }
 
-struct TimeWeatherInfo {
-    let time: String
-    let image: String
-    let value: String
+enum WeatherImageSource {
+    case url(iconCode: String)
+    case local(named: String)
 }
+
+struct TimeWeatherInfo {
+    let time: String             // HH:mm 형식
+    let imageSource: WeatherImageSource
+    let value: String            // 온도 (예: "23º")
+}
+
 // 공통 UI 컴포넌트: 타이틀과 날씨 정보를 간단하게 표시하는 뷰
 // 상단에 타이틀, 위치, 상태, 온도
 // 하단에 날씨 정보들을 2개씩 묶어서 자동 배치
@@ -121,7 +127,7 @@ class CustomWeatherInfoView: UIView {
             if smallStackRow.count == 2 {
                 let mediumStack = UIStackView(arrangedSubviews: smallStackRow)
                 mediumStack.axis = .horizontal
-                mediumStack.spacing = 106
+                mediumStack.spacing = 75
                 mediumStack.distribution = .fillEqually
                 largeStack.addArrangedSubview(mediumStack)
                 smallStackRow.removeAll()
@@ -139,6 +145,7 @@ class CustomWeatherInfoView: UIView {
         valueLabel.text = value
         valueLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 24)
         valueLabel.textColor = .black
+        valueLabel.numberOfLines = 0
         
         let smallStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
         smallStack.axis = .vertical
@@ -157,11 +164,27 @@ class CustomWeatherInfoView: UIView {
             timeLabel.textColor = .black
             
             let imageView = UIImageView()
-            imageView.image = UIImage(named: weather.image)
-            imageView.contentMode = .scaleAspectFit
-            imageView.snp.makeConstraints {
-                $0.size.equalTo(40) //
-            }
+                  imageView.contentMode = .scaleAspectFit
+                  imageView.snp.makeConstraints {
+                      $0.size.equalTo(40)
+                  }
+
+                  // 분기 처리함. 기태님 - 로컬, 나머지 URL 이미지로 빠지도록.
+                  switch weather.imageSource {
+                  case .local(let name):
+                      imageView.image = UIImage(named: name)
+
+                  case .url(let iconCode):
+                      let urlStr = "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
+                      guard let url = URL(string: urlStr) else { break }
+                      URLSession.shared.dataTask(with: url) { data, _, error in
+                          guard let data = data, error == nil,
+                                let img = UIImage(data: data) else { return }
+                          DispatchQueue.main.async {
+                              imageView.image = img
+                          }
+                      }.resume()
+                  }
             
             let valueLabel = UILabel()
             valueLabel.text = weather.value
