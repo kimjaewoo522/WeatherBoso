@@ -7,27 +7,26 @@ final class SurferDetailViewController: UIViewController {
     
     private let customWeatherInfo = CustomWeatherInfoView()
     private let disposeBag = DisposeBag()
-    
+    private let beachName: String
     private var viewModel: SurferDetailViewModel!
     
-    // MARK: - Init with Lat/Lon
-    init(latitude: Double, longitude: Double) {
-        super.init(nibName: nil, bundle: nil)
+    init(name: String, latitude: Double, longitude: Double) {
+        self.beachName = name
         self.viewModel = SurferDetailViewModel(latitude: latitude, longitude: longitude)
+        super.init(nibName: nil, bundle: nil)
+
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
     }
     
-    // MARK: - UI
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(customWeatherInfo)
@@ -36,7 +35,6 @@ final class SurferDetailViewController: UIViewController {
         }
     }
 
-    // MARK: - ViewModel Binding
     private func bindViewModel() {
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
@@ -52,18 +50,31 @@ final class SurferDetailViewController: UIViewController {
     private func updateUI(with weather: SurferWeather) {
         customWeatherInfo.updateWeatherHeader(
             title: "파도보소",
-            location: "부산",
+            location: beachName,
             temperature: "\(weather.temperature)°C",
             status: weather.weatherCode
         )
         
-        customWeatherInfo.setImageTC("Riding2", .blue)
+        let waveHeight = weather.waveHeight
+        let imageName: String
+        switch waveHeight {
+        case ..<0.5:
+            imageName = "Surfing3"
+        case 0.5..<1.2:
+            imageName = "Surfing"
+        case 1.2...:
+            imageName = "Surfing2"
+        default:
+            imageName = "Surfing"
+        }
+        
+        customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1))
         
         customWeatherInfo.updateWeatherInfo(items: [
             WeatherData(title: "파도", value: "\(weather.waveHeight)m"),
             WeatherData(title: "바람", value: "\(weather.windSpeed)m/s"),
-            WeatherData(title: "일출", value: weather.sunrise.first ?? "-"),
-            WeatherData(title: "일몰", value: weather.sunset.first ?? "-")
+            WeatherData(title: "일출", value: weather.sunrise.first?.split(separator: "T").last.map(String.init) ?? "-"),
+            WeatherData(title: "일몰", value: weather.sunset.first?.split(separator: "T").last.map(String.init) ?? "-")
         ])
     }
 }
