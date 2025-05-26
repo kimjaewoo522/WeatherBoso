@@ -6,6 +6,8 @@ struct StadiumModel {
     let lon: Double
     var temp: String?
     var description: String?
+    
+    let searchKeywords: [String]
 }
 
 struct WeatherResponse: Decodable {
@@ -32,10 +34,10 @@ struct Main: Decodable {
 }
 
 struct Rain: Codable {
-    let the3H: Double?
+    let the1H: Double?
 
     enum CodingKeys: String, CodingKey {
-        case the3H = "3h"
+        case the1H = "1h"
     }
 }
 
@@ -48,8 +50,9 @@ struct Wind: Codable {
 struct Clouds: Codable {
     let all: Int
 }
+
 extension StadiumModel {
     static var empty: StadiumModel {
-        StadiumModel(stadiumName: "", teamLogo: "", lat: 0.0, lon: 0.0)
+        StadiumModel(stadiumName: "", teamLogo: "", lat: 0.0, lon: 0.0, searchKeywords: [])
     }
 }
