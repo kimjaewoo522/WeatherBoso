@@ -1,49 +1,69 @@
-//
-//  SurferView.swift
-//  WeatherBoso
-//
-//  Created by 김재우 on 5/20/25.
-//
-
-import Foundation
 import UIKit
 import SnapKit
-
+import RxSwift
+import RxCocoa
 
 final class SurferDetailViewController: UIViewController {
-    private let customWeatherInfo = CustomWeatherInfoView()
-
     
+    private let customWeatherInfo = CustomWeatherInfoView()
+    private let disposeBag = DisposeBag()
+    
+    private var viewModel: SurferDetailViewModel!
+    
+    // MARK: - Init with Lat/Lon
+    init(latitude: Double, longitude: Double) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = SurferDetailViewModel(latitude: latitude, longitude: longitude)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupContent()
-
+        bindViewModel()
     }
+    
+    // MARK: - UI
     private func setupUI() {
-      view.backgroundColor = .white
-      view.addSubview(customWeatherInfo)
-      //customWeatherInfo에 대한 제약조건 ( 뷰 전체 )
-      customWeatherInfo.snp.makeConstraints { make in
-        make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
-      }
+        view.backgroundColor = .white
+        view.addSubview(customWeatherInfo)
+        customWeatherInfo.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
+        }
     }
-    func setupContent() {
-        //헤더스택뷰에 들어갈 정보
+
+    // MARK: - ViewModel Binding
+    private func bindViewModel() {
+        let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
+        let output = viewModel.transform(input: input)
+
+        output.weather
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weather in
+                self?.updateUI(with: weather)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func updateUI(with weather: SurferWeather) {
         customWeatherInfo.updateWeatherHeader(
             title: "파도보소",
             location: "부산",
-            temperature: "36도",
-            status: "맑음")
-        //이미지랑, 타이틀 색상 정보
+            temperature: "\(weather.temperature)°C",
+            status: weather.weatherCode
+        )
+        
         customWeatherInfo.setImageTC("Riding2", .blue)
-        // 하단 스택뷰 정보
+        
         customWeatherInfo.updateWeatherInfo(items: [
-            WeatherData(title: "파도", value: "30km"),
-            WeatherData(title: "바람", value: "30km"),
-            WeatherData(title: "일출", value: "30km"),
-            WeatherData(title: "일몰", value: "30km")
+            WeatherData(title: "파도", value: "\(weather.waveHeight)m"),
+            WeatherData(title: "바람", value: "\(weather.windSpeed)m/s"),
+            WeatherData(title: "일출", value: weather.sunrise.first ?? "-"),
+            WeatherData(title: "일몰", value: weather.sunset.first ?? "-")
         ])
     }
 }
-

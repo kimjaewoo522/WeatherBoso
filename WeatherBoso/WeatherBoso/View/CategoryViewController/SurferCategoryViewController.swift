@@ -59,11 +59,10 @@ final class SurferCategoryViewController: UIViewController {
 
     private func bindCellTap() {
         collection.rx.modelSelected(Beach.self)
-            .withUnretained(self)
-            .bind { beach in
-                let detailVC = SurferDetailViewController()
-                self.navigationController?.pushViewController(detailVC, animated: true)
-            }
+            .subscribe(onNext: { [weak self] beach in
+                let detailVC = SurferDetailViewController(latitude: beach.latitude, longitude: beach.longitude)
+                self?.navigationController?.pushViewController(detailVC, animated: true)
+            })
             .disposed(by: disposeBag)
     }
     

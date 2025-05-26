@@ -12,5 +12,7 @@ struct Beach {
     let imageName: String
     let temperature: String
     let weatherStatus: String
+    let latitude: Double
+    let longitude: Double
    
 }

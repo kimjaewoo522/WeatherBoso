@@ -31,11 +31,13 @@ final class SurferCategoryViewModel {
     func fetchBeachSections() -> Observable<[BeachSection]> {
         let beachObservables = beachList.map { location in
             weatherService.fetchWeather(latitude: location.lat, longitude: location.lon)
-                .map { temp, weather in
+                .map { weather in
                     Beach(name: location.name,
                           imageName: location.imageName,
-                          temperature: temp,
-                          weatherStatus: weather)
+                          temperature: weather.temperature,
+                          weatherStatus: weather.weatherCode,
+                          latitude: location.lat,
+                          longitude: location.lon)
                 }
         }
         
