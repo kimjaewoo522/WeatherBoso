@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let splashVC = SplashViewController()
         
-        window.rootViewController = splashVC
+        window.rootViewController = RiderDetailViewController()
         window.makeKeyAndVisible()
         self.window = window
 

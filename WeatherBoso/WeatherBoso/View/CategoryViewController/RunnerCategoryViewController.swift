@@ -51,7 +51,6 @@ final class RunnerCategoryViewController: UIViewController{
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
-        
     }
     
     private func setConst() {
@@ -77,7 +76,6 @@ final class RunnerCategoryViewController: UIViewController{
             $0.top.equalTo(searchBar.snp.bottom).offset(27)
             $0.leading.trailing.equalToSuperview().inset(23)
         }
-        
     }
     
     private func collectionSet() -> UICollectionViewCompositionalLayout {

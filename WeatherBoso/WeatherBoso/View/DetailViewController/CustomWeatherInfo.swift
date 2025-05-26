@@ -12,11 +12,10 @@ struct TimeWeatherInfo {
     let image: String
     let value: String
 }
-
 // 공통 UI 컴포넌트: 타이틀과 날씨 정보를 간단하게 표시하는 뷰
 // 상단에 타이틀, 위치, 상태, 온도
 // 하단에 날씨 정보들을 2개씩 묶어서 자동 배치
-final class CustomWeatherInfoView: UIView {
+class CustomWeatherInfoView: UIView {
     
     private let titleLabel = UILabel()
     private let locationStatusLabel = UILabel()
@@ -31,19 +30,16 @@ final class CustomWeatherInfoView: UIView {
         setupUI()
         setupLayout()
     }
-    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
         setupLayout()
     }
-    
     // 외부에서 타이틀 색상 변경 가능
     func setImageTC(_ imageName: String,_ color: UIColor) {
         titleLabel.textColor = color
         imageView.image = UIImage(named: imageName)
     }
-    
     private func setupUI() {
         // 스택 방향: 세로
         headerStack.axis = .vertical
@@ -62,6 +58,7 @@ final class CustomWeatherInfoView: UIView {
         addSubview(largeStack)
         addSubview(imageView)
         addSubview(timeStack)
+        
         // 라벨 스타일 지정
         imageView.contentMode = .scaleAspectFit
         
@@ -78,15 +75,12 @@ final class CustomWeatherInfoView: UIView {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(150)
             $0.trailing.equalToSuperview().inset(30)
-            //            $0.leading.equalToSuperview().inset(
             $0.width.height.equalTo(200)
         }
-        
         headerStack.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.leading.trailing.equalToSuperview().inset(15)
         }
-        
         largeStack.snp.makeConstraints {
             $0.top.equalTo(headerStack.snp.bottom).offset(200) // 상단 스택과 간격
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -98,20 +92,18 @@ final class CustomWeatherInfoView: UIView {
             $0.height.equalTo(100) //
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
+
     }
-    
     // 상단 헤더뷰 설정
     func makeHeaderStack(title: String, location: String, temperature: String, status: String) {
         titleLabel.text = title
         locationStatusLabel.text = "📍\(location) / \(status)"
         tempLabel.text = temperature
-        
         // 기존에 들어간 라벨들 제거하고 새로 추가
         headerStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         [titleLabel, locationStatusLabel, tempLabel].forEach {
             headerStack.addArrangedSubview($0)
         }
-        
         // 라벨 간 간격 지정
         headerStack.setCustomSpacing(32, after: titleLabel)
         headerStack.setCustomSpacing(10, after: locationStatusLabel)
@@ -120,13 +112,11 @@ final class CustomWeatherInfoView: UIView {
     // 중단 정보 설정
     func makeLargeStack(items: [WeatherData]) {
         largeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
         var smallStackRow: [UIStackView] = []
         
         for item in items {
             let smallStack = makeSmallStack(title: item.title, value: item.value)
             smallStackRow.append(smallStack)
-            
             if smallStackRow.count == 2 {
                 let mediumStack = UIStackView(arrangedSubviews: smallStackRow)
                 mediumStack.axis = .horizontal
@@ -137,9 +127,8 @@ final class CustomWeatherInfoView: UIView {
             }
         }
     }
-    
     // 중단에 들어갈 title, value를 smallstack으로 만들어줌
-    private func makeSmallStack(title: String, value: String) -> UIStackView {
+    func makeSmallStack(title: String, value: String) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = .systemFont(ofSize: 20, weight: .medium)
