@@ -41,9 +41,8 @@ final class RunnerDetailViewController: UIViewController {
             .combineLatest(viewModel.nowWeather.compactMap { $0 }, viewModel.airPollutionResponse.compactMap { $0 })
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] (weather: WeatherEntry, air: AirPollutionData) in
-                guard let self = self else { return }
-                let air = air
-                
+                            guard let self = self else { return }
+                            let air = air
                 self.weatherInfoView.setImageTC("Running4", .black)
                 self.weatherInfoView.makeHeaderStack(
                     title: "뛰어 보소",
@@ -54,10 +53,10 @@ final class RunnerDetailViewController: UIViewController {
                 
                 let humidity = "\(weather.main.humidity)%"
                 let windSpeed = "\(weather.wind.speed)m/s"
-                
-                let pm10Value = Int(air.components.pm10 ?? 0)
-                let pm25Value = Int(air.components.pm25 ?? 0)
-                
+        
+                let pm10Value = Int(air.components.pm10)
+                let pm25Value = Int(air.components.pm25)
+                                
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
                 
@@ -67,7 +66,6 @@ final class RunnerDetailViewController: UIViewController {
                     WeatherData(title: "미세먼지", value: pm10),
                     WeatherData(title: "초미세먼지", value: pm25)
                 ]
-                
                 self.weatherInfoView.makeLargeStack(items: weatherDataList)
             })
             .disposed(by: disposeBag)

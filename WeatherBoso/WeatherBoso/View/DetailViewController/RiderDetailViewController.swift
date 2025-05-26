@@ -54,7 +54,7 @@ class RiderDetailViewController: UIViewController {
                 let weatherStatus = self.WeatherStatus(for: weatherStatusValue, type: .main)
                 
                 print("대기질 components 확인: \(air.components)")
-                self.customWeatherInfo.makeLargeStack (items: [
+                self.customWeatherInfo.makeLargeStack(items: [
                     WeatherData(title: "가시거리", value: "\((weather.visibility) / 1000 )km"),
                     WeatherData(title: "풍속", value: String(format: "%.1f m/s", weather.wind.speed)),
                     WeatherData(title: "미세먼지", value: "\(pm10)"),
