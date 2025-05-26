@@ -121,7 +121,7 @@ class CustomWeatherInfoView: UIView {
             if smallStackRow.count == 2 {
                 let mediumStack = UIStackView(arrangedSubviews: smallStackRow)
                 mediumStack.axis = .horizontal
-                mediumStack.spacing = 106
+                mediumStack.spacing = 75
                 mediumStack.distribution = .fillEqually
                 largeStack.addArrangedSubview(mediumStack)
                 smallStackRow.removeAll()
