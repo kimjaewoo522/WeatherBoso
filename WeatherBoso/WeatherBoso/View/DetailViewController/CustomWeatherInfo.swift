@@ -73,26 +73,26 @@ class CustomWeatherInfoView: UIView {
         locationStatusLabel.font = .systemFont(ofSize: 16)
         locationStatusLabel.textColor = .darkGray
         
-        tempLabel.font = .systemFont(ofSize: 50)
+        tempLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 50)
     }
     
     private func setupLayout() {
         imageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(150)
-            $0.trailing.equalToSuperview().inset(30)
+            $0.top.equalToSuperview().offset(130)
+            $0.trailing.equalToSuperview().inset(20)
             $0.width.height.equalTo(200)
         }
         headerStack.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalToSuperview().offset(10)
             $0.leading.trailing.equalToSuperview().inset(15)
         }
         largeStack.snp.makeConstraints {
-            $0.top.equalTo(headerStack.snp.bottom).offset(200) // 상단 스택과 간격
+            $0.top.equalTo(headerStack.snp.bottom).offset(250) // 상단 스택과 간격
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
         timeStack.snp.makeConstraints {
-            $0.top.equalTo(largeStack.snp.bottom).offset(40)
+            $0.top.equalTo(largeStack.snp.bottom).offset(60)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(100) //
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
@@ -110,13 +110,15 @@ class CustomWeatherInfoView: UIView {
             headerStack.addArrangedSubview($0)
         }
         // 라벨 간 간격 지정
-        headerStack.setCustomSpacing(32, after: titleLabel)
+        headerStack.setCustomSpacing(10, after: titleLabel)
         headerStack.setCustomSpacing(10, after: locationStatusLabel)
     }
     
     // 중단 정보 설정
     func makeLargeStack(items: [WeatherData]) {
         largeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        largeStack.axis = .vertical
+        largeStack.spacing = 40
         var smallStackRow: [UIStackView] = []
         
         for item in items {
@@ -125,7 +127,7 @@ class CustomWeatherInfoView: UIView {
             if smallStackRow.count == 2 {
                 let mediumStack = UIStackView(arrangedSubviews: smallStackRow)
                 mediumStack.axis = .horizontal
-                mediumStack.spacing = 106
+                mediumStack.spacing = 75
                 mediumStack.distribution = .fillEqually
                 largeStack.addArrangedSubview(mediumStack)
                 smallStackRow.removeAll()
@@ -136,18 +138,18 @@ class CustomWeatherInfoView: UIView {
     func makeSmallStack(title: String, value: String) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 20, weight: .medium)
+        titleLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
         titleLabel.textColor = .gray
         
         let valueLabel = UILabel()
         valueLabel.text = value
-        valueLabel.font = .boldSystemFont(ofSize: 32)
+        valueLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 24)
         valueLabel.textColor = .black
         valueLabel.numberOfLines = 0
         
         let smallStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
         smallStack.axis = .vertical
-        smallStack.spacing = 5
+        smallStack.spacing = 15
         return smallStack
     }
     // 하단 시간별 날씨 정보 스택뷰 설정
@@ -158,7 +160,7 @@ class CustomWeatherInfoView: UIView {
             
             let timeLabel = UILabel()
             timeLabel.text = weather.time
-            timeLabel.font = .systemFont(ofSize: 14)
+            timeLabel.font = UIFont(name: "GmarketSansLight", size: 15)
             timeLabel.textColor = .black
             
             let imageView = UIImageView()
@@ -186,7 +188,7 @@ class CustomWeatherInfoView: UIView {
             
             let valueLabel = UILabel()
             valueLabel.text = weather.value
-            valueLabel.font = .boldSystemFont(ofSize: 25)
+            valueLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 15)
             
             let smallTimeStack = UIStackView(arrangedSubviews: [timeLabel, imageView, valueLabel])
             smallTimeStack.axis = .vertical
