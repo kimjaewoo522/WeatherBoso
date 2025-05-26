@@ -5,6 +5,10 @@ import RxCocoa
 
 final class SurferDetailViewController: UIViewController {
     
+    private let scrollView = UIScrollView()
+    private let containerView = UIView()
+    private let refreshControl = UIRefreshControl()
+    
     private let customWeatherInfo = CustomWeatherInfoView()
     private let disposeBag = DisposeBag()
     private let beachName: String
@@ -25,16 +29,62 @@ final class SurferDetailViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
+        bindRefreshControl()
     }
     
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(customWeatherInfo)
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
+        containerView.addSubview(customWeatherInfo)
+        
+        scrollView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+
+        containerView.snp.makeConstraints {
+            $0.edges.width.equalToSuperview()
+        }
+
+        customWeatherInfo.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
+        
+        scrollView.refreshControl = refreshControl
     }
 
+    private func bindRefreshControl() {
+        refreshControl.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                self.reloadWeather()
+                
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func reloadWeather() {
+        let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
+        let output = viewModel.transform(input: input)
+        
+        output.weather
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weather in
+                self?.updateUI(with: weather)
+                self?.refreshControl.endRefreshing()
+                              
+            }, onError: { [weak self] error in
+                print("Error")
+                self?.refreshControl.endRefreshing()
+                
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func bindViewModel() {
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
