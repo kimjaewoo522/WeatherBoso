@@ -54,8 +54,8 @@ final class RunnerDetailViewController: UIViewController {
                 let humidity = "\(weather.main.humidity)%"
                 let windSpeed = "\(weather.wind.speed)m/s"
         
-                let pm10Value = Int(air.components.pm10)
-                let pm25Value = Int(air.components.pm25)
+                let pm10Value = Int(air.components.pm10 ?? 0)
+                let pm25Value = Int(air.components.pm25 ?? 0)
                                 
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
