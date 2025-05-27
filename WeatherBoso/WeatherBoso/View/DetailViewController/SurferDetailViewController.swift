@@ -144,7 +144,7 @@ final class SurferDetailViewController: UIViewController {
                 waveImage = "Surfing"
             }
             
-            return TimeWeatherInfo(time: timeString, image: waveImage, value: "\(height)m")
+            return TimeWeatherInfo(time: timeString, imageSource: WeatherImageSource.local(named: waveImage), value: "\(height)m")
         }
                                      
         
