@@ -38,23 +38,11 @@ final class SurferCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
-        view.addSubview(collection)
-        view.addSubview(searchBar)
-        view.addSubview(customNavBar)
-        customNavBar.addSubview(backButton)
-
-        collection.register(SurferCell.self, forCellWithReuseIdentifier: String(describing: SurferCell.self))
-
+        setupUI()
         setConstraints()
         bindViewModel()
         bindCellTap()
-
-        backButton.rx.tap
-            .bind { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }
-            .disposed(by: disposeBag)
+        backButtonTapped()
         
     }
 
@@ -79,7 +67,25 @@ final class SurferCategoryViewController: UIViewController {
             .bind(to: collection.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
+    
+    private func backButtonTapped() {
+        backButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(collection)
+        view.addSubview(searchBar)
+        view.addSubview(customNavBar)
+        customNavBar.addSubview(backButton)
+        collection.register(SurferCell.self, forCellWithReuseIdentifier: String(describing: SurferCell.self))
+        collection.showsVerticalScrollIndicator = false
 
+    }
 
     private func setConstraints() {
         customNavBar.snp.makeConstraints {

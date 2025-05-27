@@ -24,7 +24,10 @@ final class SurferCategoryViewModel {
         BeachLocation(name: "죽도해변", imageName: "Yangyang1", lat: 37.96, lon: 128.88, keyword: ["죽도", "양양"]),
         BeachLocation(name: "설악해변", imageName: "Yangyang2", lat: 38.13, lon: 128.79, keyword: ["설악", "양양"]),
         BeachLocation(name: "월포해변", imageName: "Yangyang3", lat: 36.21, lon: 129.46, keyword: ["월포", "포항"]),
-        BeachLocation(name: "만리포해변", imageName: "Yangyang4", lat: 36.79, lon: 126.13, keyword: ["만리포", "태안"])
+        BeachLocation(name: "만리포해변", imageName: "Yangyang4", lat: 36.79, lon: 126.13, keyword: ["만리포", "태안"]),
+        BeachLocation(name: "중문해변", imageName: "Yangyang5", lat: 36.79, lon: 126.13, keyword: ["중문", "제주"]),
+        BeachLocation(name: "이호테우해변", imageName: "Yangyang6", lat: 36.79, lon: 126.13, keyword: ["이호테우", "제주"]),
+        BeachLocation(name: "송정해변", imageName: "Yangyang7", lat: 36.79, lon: 126.13, keyword: ["송정", "부산"])
     ]
     
     // 검색어 입력을 처리할 Relay
