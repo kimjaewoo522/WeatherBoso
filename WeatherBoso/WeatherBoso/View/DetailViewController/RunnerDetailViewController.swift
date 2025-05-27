@@ -9,26 +9,26 @@ final class RunnerDetailViewController: UIViewController {
     private let weatherInfoView = CustomWeatherInfoView()
     private let viewModel = RunnerViewModel.shared
     private let disposeBag = DisposeBag()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
         configureWeatherView()
     }
-
+    
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(weatherInfoView)
         print("위도: \(latitude ?? 0), 경도: \(longitude ?? 0)")
     }
-
+    
     private func setupConstraints() {
         weatherInfoView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
-
+    
     private func configureWeatherView() {
         guard let lat = latitude, let lon = longitude else { return }
         viewModel.fetchWeatherInfo(lat: lat, lon: lon)
@@ -46,8 +46,8 @@ final class RunnerDetailViewController: UIViewController {
                 if let mainCondition = weather.weather.first?.main {
                     if mainCondition.lowercased() == "Rain" {
                         imageName = "Running4"
-                    } else {
                         switch temp {
+                    } else {
                         case ..<18:
                             imageName = "Running3"
                         case 18..<30:
@@ -69,32 +69,31 @@ final class RunnerDetailViewController: UIViewController {
                     temperature: "\(Int(weather.main.temp))℃",
                     status: weather.weather.first?.description ?? "정보 없음"
                 )
-
+                
                 let humidity = "\(weather.main.humidity)%"
                 let windSpeed = "\(weather.wind.speed)m/s"
-                
                 let pm10Value = Int(air.components.pm10)
                 let pm25Value = Int(air.components.pm25)
+                
 
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
-
+                
                 let weatherDataList = [
                     WeatherData(title: "습도", value: humidity),
                     WeatherData(title: "풍속", value: windSpeed),
                     WeatherData(title: "미세먼지", value: pm10),
                     WeatherData(title: "초미세먼지", value: pm25)
                 ]
-
                 self.weatherInfoView.makeLargeStack(items: weatherDataList)
             })
             .disposed(by: disposeBag)
     }
-
+    
     private enum DustType {
         case pm10, pm25
     }
-
+    
     private func airQualityStatus(for value: Int, type: DustType) -> String {
         switch type {
         case .pm10:
