@@ -11,17 +11,16 @@ import RxCocoa
 
 class BaseBallViewModel {
     
-    /// binding을 위해 꼭 필요
-    //    let stadiums = BehaviorSubject<[StadiumModel]>(value: [])
-    
     let disposedBag = DisposeBag()
     let weatherPerDay = BehaviorRelay<[StadiumModel]>(value: [])
     let categoryHomeScreen = BehaviorRelay<[StadiumModel]>(value: [])
     var weatherDict: [String: WeatherResponse] = [:]
+    let weatherPerHour = BehaviorRelay<[TimeWeatherInfo]>(value: [])
+    let currentWeather = BehaviorRelay<WeatherResponse?>(value: nil)
     
-    private let dummyWeather = WeatherResponse(
+    let dummyWeather = WeatherResponse(
         weather: [Weather(description: "정보 없음", icon: "")],
-        main: Main(temp: 0.0, humidity: 0), 
+        main: Main(temp: 0.0, humidity: 0),
         clouds: Clouds(all: 0),
         wind: Wind(speed: 0.0, deg: 0, gust: nil),
         rain: nil,
@@ -30,23 +29,24 @@ class BaseBallViewModel {
     
     init() {}
     
-    /// 밖에서 읽을 수는 있으나 수정 불가
+    // 구장 정보로 초기에 로드되는 고정데이터
     var stadiumInfo: [StadiumModel] = BaseballStadiumData.all
     
-    // 디스패치그룹
+    // 디스패치그룹 for 카테고리뷰
+    //
     func fetchAllStadiumWeather() {
         var updatedStadiums = Array(repeating: StadiumModel.empty, count: stadiumInfo.count)
         var weatherResponses: [WeatherResponse] = Array(
-                repeating: dummyWeather, // 또는 첫 번째 stadium 날씨 구조체
-                count: stadiumInfo.count
-            )
+            repeating: dummyWeather, // 또는 첫 번째 stadium 날씨 구조체
+            count: stadiumInfo.count
+        )
         
         let group = DispatchGroup()
         
         for (index, stadium) in stadiumInfo.enumerated() {
             group.enter()
-
-
+            
+            
             guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(stadium.lat)&lon=\(stadium.lon)&appid=82fa9d3fa33aaa4358ca085201f3a956&units=metric&lang=kr") else {
                 group.leave()
                 continue
@@ -60,15 +60,7 @@ class BaseBallViewModel {
                     updatedStadiums[index] = updated
                     group.leave()
                 }, onFailure: { error in
-                    print("에러1: \(error.localizedDescription)")
                     
-                    if let urlError = error as? URLError {
-                        print("URLError2: \(urlError)")
-                    }
-                    
-                    if let afError = error as? DecodingError {
-                        print("DecodingError3: \(afError)")
-                    }
                     group.leave()
                 })
                 .disposed(by: disposedBag)
@@ -80,8 +72,8 @@ class BaseBallViewModel {
             self.categoryHomeScreen.accept(updatedStadiums) // 여기서 초기화 해줘야 초기 화면에 뜸
             
             for (index, stadium) in self.stadiumInfo.enumerated() {
-                        self.weatherDict[stadium.stadiumName] = weatherResponses[index]
-                    }
+                self.weatherDict[stadium.stadiumName] = weatherResponses[index]
+            }
         }
     }
     
@@ -97,30 +89,61 @@ class BaseBallViewModel {
             categoryHomeScreen.accept(filtered)
         }
         
+    }
+    
+    // 디테일뷰
+    
+    func fetchcurrentWeather(for stadium: StadiumModel) {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(stadium.lat)&lon=\(stadium.lon)&appid=82fa9d3fa33aaa4358ca085201f3a956&units=metric&lang=kr") else {
+            return
+        }
+        NetworkManager.shared.fetch(url: url)
+            .subscribe(onSuccess: { (response: WeatherResponse) in
+                self.currentWeather.accept(response)
+            }, onFailure: { error in
+            })
+            .disposed(by: disposedBag)
+
+    }
+    
+    func fetchWeatherPerHour(for stadium: StadiumModel) {
+        print("함수 작동 성공")
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(stadium.lat)&lon=\(stadium.lon)&appid=82fa9d3fa33aaa4358ca085201f3a956&units=metric&lang=kr") else {
+            
+            return
+        }
+        print("url 생성 성공")
         
-        
-        //    func fiveDaysWeatherURL(for index: Int) {
-        //
-        //        let myAPI = "82fa9d3fa33aaa4358ca085201f3a956"
-        //
-        //        let stadiumLoca = stadiumInfo[index]
-        //        guard let URL = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}") else {
-        //            return
-        //        }
-        //
-        //        NetworkManager.shared.fetch(url: URL, lat: stadiumLoca.lat, lon: stadiumLoca.lon)
-        //            .subscribe(onSuccess: { [weak self] (response: WeatherResponse) in
-        //                let temperature = "\(Int(response.list.first?.main.temp ?? 0))°C"
-        //                let desc = response.list.first?.weather.first?.description ?? ""
-        //
-        //                self?.stadiumInfo[index].temp = temperature
-        //                self?.stadiumInfo[index].description = desc
-        //            }, onFailure: { [weak self] error in
-        //                print("")
-        //            })
-        //            .disposed(by: disposedBag)
-        //    }
-        
-        
+        NetworkManager.shared.fetch(url: url)
+            .subscribe(onSuccess: { (response: ForecastResponse) in
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                
+                let hourlyWeather = response.list.prefix(5).map { item in
+                    let time = formatter.string(
+                        from: Date(
+                            timeIntervalSince1970: TimeInterval(item.dt)))
+                    let temp = "\(Int(item.main.temp))°"
+                    let icon = item.weather.first?.icon ?? ""
+                    let iconCode = item.weather.first?.icon ?? "01d"
+                    let imageName: String
+                    if icon.contains("01") { imageName = "sunny" }
+                    else if icon.contains("n") { imageName = "night" }
+                    else if icon.contains("09") || icon.contains("10") { imageName = "rain" }
+                    else if icon.contains("13") { imageName = "snow" }
+                    else { imageName = "cloud" }
+                    
+                    return TimeWeatherInfo(
+                        time: time,
+                        imageSource: .url(iconCode: iconCode),
+                        value: temp)
+                }
+                
+                self.weatherPerHour.accept(hourlyWeather)
+            }, onFailure: { error in
+                self.weatherPerHour.accept([])
+            })
+            .disposed(by: disposedBag)
     }
 }

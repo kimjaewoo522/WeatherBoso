@@ -12,29 +12,29 @@ class BaseballCell: UICollectionViewCell {
     static let id = "BaseballCell"
     
     let locabg: UIImageView = {
-        let b = UIImageView()
-        b.contentMode = .scaleAspectFill
-        b.clipsToBounds = true
-        b.layer.cornerRadius = 20
-        return b
+        let logo = UIImageView()
+        logo.contentMode = .scaleAspectFill
+        logo.clipsToBounds = true
+        logo.layer.cornerRadius = 20
+        return logo
     }()
     
     let locaName: UILabel = {
-        let n = UILabel()
-        n.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
-        return n
+        let name = UILabel()
+        name.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
+        return name
     }()
     
     let tempLabel: UILabel = {
-        let t = UILabel()
-        t.font = UIFont(name: "GmarketSansTTFLight", size: 12)
-        return t
+        let temp = UILabel()
+        temp.font = UIFont(name: "GmarketSansTTFLight", size: 12)
+        return temp
     }()
     
     let statusLabel: UILabel = {
-        let s = UILabel()
-        s.font = UIFont(name: "GmarketSansTTFLight", size: 14)
-        return s
+        let status = UILabel()
+        status.font = UIFont(name: "GmarketSansTTFLight", size: 14)
+        return status
     }()
     
     override init(frame: CGRect) {

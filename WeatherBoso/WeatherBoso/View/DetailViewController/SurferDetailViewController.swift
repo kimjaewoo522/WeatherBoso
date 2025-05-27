@@ -53,15 +53,13 @@ final class SurferDetailViewController: UIViewController {
         }
         
         containerView.snp.makeConstraints {
-            $0.edges.width.equalToSuperview()
-        }
-        
-        customWeatherInfo.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide) // 세로 스크롤만 허용
         }
         
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.bottom.equalToSuperview().inset(20)
         }
         
         scrollView.refreshControl = refreshControl
@@ -78,9 +76,9 @@ final class SurferDetailViewController: UIViewController {
     }
     
     private func reloadWeather() {
+        // just(())는 아무 값도 없지만 이벤트가 발생했다는 사실 그자체를 표현한 스트림
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
-        
         output.weather
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weather in
@@ -156,9 +154,9 @@ final class SurferDetailViewController: UIViewController {
             }
             
             return TimeWeatherInfo(time: timeString, imageSource: WeatherImageSource.local(named: waveImage), value: "\(height)m")
+
         }
-        
-        
+       
         customWeatherInfo.makeTimeStack(data: waveTimeData)
     }
 }
