@@ -1,18 +1,13 @@
-//
-//  RunnerView.swift
-//  WeatherBoso
-//
-//  Created by 김재우 on 5/20/25.
-//
-
 import UIKit
 import SnapKit
 import RxSwift
 
 final class RunnerDetailViewController: UIViewController {
+    var latitude: Double?
+    var longitude: Double?
     
     private let weatherInfoView = CustomWeatherInfoView()
-    private let viewModel = RiderViewModel()
+    private let viewModel = RunnerViewModel.shared
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -25,6 +20,7 @@ final class RunnerDetailViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(weatherInfoView)
+        print("위도: \(latitude ?? 0), 경도: \(longitude ?? 0)")
     }
     
     private func setupConstraints() {
@@ -34,7 +30,10 @@ final class RunnerDetailViewController: UIViewController {
     }
     
     private func configureWeatherView() {
-        viewModel.fecthWeatherInfo()
+        guard let lat = latitude, let lon = longitude else { return }
+        viewModel.fetchWeatherInfo(lat: lat, lon: lon)
+        viewModel.fetchAirQuality(lat: lat, lon: lon)
+        viewModel.fetchWeatherInfo()
         viewModel.fetchAirQuality()
         //combineLatest: 두 Observable이 emit할 때마다 가장 최신 값들을 함께 묶어 전달, nil을 제거한 유효값만 전달
         Observable
@@ -43,7 +42,29 @@ final class RunnerDetailViewController: UIViewController {
             .subscribe(onNext: { [weak self] (weather: WeatherEntry, air: AirPollutionData) in
                             guard let self = self else { return }
                             let air = air
-                self.weatherInfoView.setImageTC("Running4", .black)
+
+                let temp = weather.main.temp
+                let imageName: String
+                if let mainCondition = weather.weather.first?.main {
+                    if mainCondition.lowercased() == "Rain" {
+                        imageName = "Running4"
+                    } else {
+                        switch temp {
+                        case ..<18:
+                            imageName = "Running3"
+                        case 18..<30:
+                            imageName = "Running"
+                        default:
+                            imageName = "Running2"
+                        }
+                    }
+                } else {
+                    // 날씨 정보가 없을 경우 기본 이미지
+                    imageName = "Running"
+                }
+
+                self.weatherInfoView.setImageTC(imageName, .black)
+                
                 self.weatherInfoView.makeHeaderStack(
                     title: "뛰어 보소",
                     location: "서울특별시",
@@ -53,10 +74,10 @@ final class RunnerDetailViewController: UIViewController {
                 
                 let humidity = "\(weather.main.humidity)%"
                 let windSpeed = "\(weather.wind.speed)m/s"
-        
+
                 let pm10Value = Int(air.components.pm10)
                 let pm25Value = Int(air.components.pm25)
-                                
+                
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
                 
