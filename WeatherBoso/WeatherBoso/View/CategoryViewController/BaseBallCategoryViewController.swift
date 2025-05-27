@@ -95,8 +95,8 @@ final class BaseBallCategoryViewController: UIViewController{
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = .init(
-            top: 10, leading: 7,
-            bottom: 13, trailing: 7)
+            top: 10, leading: 15,
+            bottom: 13, trailing: 15)
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -124,18 +124,18 @@ final class BaseBallCategoryViewController: UIViewController{
             }
             .disposed(by: disposeBag)
         
-        // 디테일 화면으로 이동
-//        collection.rx.modelSelected(StadiumModel.self)
-//            .bind { [weak self] stadium in
-//                guard let self = self,
-//                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
-//                
-//                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
-//                self.navigationController?.pushViewController(detailVC, animated: true)
-//            }
-//            .disposed(by: disposeBag)
+        // 셀 누르면 디테일뷰로 이동
+        collection.rx.modelSelected(StadiumModel.self)
+            .bind { [weak self] stadium in
+                guard let self = self,
+                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
+                
+                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
+                self.navigationController?.pushViewController(detailVC, animated: true)
+            }
+            .disposed(by: disposeBag)
         
-        
+        // 검색필터
         searchBar.rx.text.orEmpty
             .distinctUntilChanged()
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)

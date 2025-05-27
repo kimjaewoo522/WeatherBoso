@@ -17,6 +17,7 @@ struct WeatherEntry: Decodable {
     let weather: [WeatherInfo]
     let wind: WindInfo
     let visibility: Int          // 가시거리 (m)
+    let dt_txt: String           // 들어오는 정보의 시간(3시간 간격)
 }
 
 struct MainInfo: Decodable {
@@ -25,7 +26,7 @@ struct MainInfo: Decodable {
 }
 
 struct WeatherInfo: Decodable {
-    let id: Int                  // 날씨 아이콘 ID
+    let id: Int                  // description에 따른 id
     let main: String             // 날씨의 큰 범주
     let description: String      // 날씨 상태 (예: 맑음, 흐림)
     let icon: String             // 날씨 ICON
@@ -51,7 +52,6 @@ struct AQI: Decodable {
 struct AirComponents: Decodable {
     let pm25: Double // 초-미세먼지
     let pm10: Double // 미세먼지
-
     
     enum CodingKeys: String, CodingKey {
         case pm25 = "pm2_5"
