@@ -127,7 +127,19 @@ final class SurferDetailViewController: UIViewController {
             imageName = "Surfing"
         }
         
-        customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1))
+        let titleName: String
+        switch waveHeight {
+        case ..<0.5:
+            titleName = "파도 보고 싶소"
+        case 0.5..<1.2:
+            titleName = "이야 파도 보소"
+        case 1.2...:
+            titleName = "옴마야 파도 보소"
+        default:
+            titleName = "이야 파도 보소"
+        }
+        customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1),title: titleName)
+        
         
         customWeatherInfo.makeLargeStack(items: [
             WeatherData(title: "파도", value: "\(weather.waveHeight)m"),
