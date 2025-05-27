@@ -25,7 +25,7 @@ final class RunnerViewModel {
     let nowWeather = BehaviorSubject<WeatherEntry?>(value: nil)
 
     // MARK: - Geocoding
-    func fetchCoordinates(for query: String) -> Single<(latitude: String, longitude: String)> {
+    func fetchCoordinates(for query: String) -> Single<(latitude: String, longitude: String, address: String)> {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "https://maps.apigw.ntruss.com/map-geocode/v2/geocode?query=\(encodedQuery)") else {
             return .error(GeocodingNetworkError.invalidUrl)
@@ -37,11 +37,11 @@ final class RunnerViewModel {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         return GeocodingNetworkManager.shared.fetch(with: request)
-            .map { (response: GeocodeResponse) -> (latitude: String, longitude: String) in
+            .map { (response: GeocodeResponse) -> (latitude: String, longitude: String, address: String) in
                 guard let address = response.addresses.first else {
                     throw GeocodingNetworkError.dataFetchFail
                 }
-                return (latitude: address.y, longitude: address.x)
+                return (latitude: address.y, longitude: address.x, address: address.roadAddress)
             }
     }
 
