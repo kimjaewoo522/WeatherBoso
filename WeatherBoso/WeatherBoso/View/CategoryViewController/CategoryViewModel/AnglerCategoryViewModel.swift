@@ -3,7 +3,8 @@ import RxRelay
 import RxSwift
 
 final class AnglerCategoryViewModel {
-    
+    // 로딩 상태 Relay생성
+    let isLoading = BehaviorRelay<Bool>(value: false)
     let anglerSections = BehaviorRelay<[AnglerSection]>(value: [])
     
     private let disposeBag = DisposeBag()
@@ -24,6 +25,9 @@ final class AnglerCategoryViewModel {
     ]
     
     func fetchAnglers() {
+        
+        isLoading.accept(true)
+
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
         let todayString = formatter.string(from: Date())
@@ -123,8 +127,10 @@ final class AnglerCategoryViewModel {
             .subscribe(onNext: { [weak self] anglers in
                 let section = AnglerSection(header: "추천 낚시 지역", items: anglers)
                 self?.anglerSections.accept([section])
+                self?.isLoading.accept(false)
             }, onError: { error in
                 print("일부 지역만 반영되었습니다:", error)
+                self.isLoading.accept(false)
             })
             .disposed(by: disposeBag)
     }
