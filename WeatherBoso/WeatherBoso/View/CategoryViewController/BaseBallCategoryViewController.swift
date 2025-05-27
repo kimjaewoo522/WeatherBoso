@@ -57,6 +57,7 @@ final class BaseBallCategoryViewController: UIViewController{
             .disposed(by: disposeBag)
         bind()
         viewModel.fetchAllStadiumWeather()
+        collection.showsVerticalScrollIndicator = false // 스크롤바 숨기기
     }
     
     private func setConst() {
