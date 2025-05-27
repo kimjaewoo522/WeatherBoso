@@ -76,6 +76,7 @@ final class RunnerCategoryViewController: UIViewController {
                 detailVC.latitude = runningSpot.lat
                 detailVC.longitude = runningSpot.lon
                 detailVC.locationName = runningSpot.name
+                detailVC.isFromSearch = false
                 self.navigationController?.pushViewController(detailVC, animated: true)
             }
             .disposed(by: disposeBag)
@@ -84,10 +85,10 @@ final class RunnerCategoryViewController: UIViewController {
     private func bindSearchBar() {
         searchBar.rx.searchButtonClicked
             .withLatestFrom(searchBar.rx.text.orEmpty)
-            .flatMapLatest { query in
+            .flatMapLatest { query -> Observable<(latitude: String, longitude: String, address: String)> in
                 RunnerViewModel.shared.fetchCoordinates(for: query)
                     .asObservable()
-                    .catchAndReturn((latitude: "0", longitude: "0"))
+                    .catchAndReturn((latitude: "0", longitude: "0", address: "알 수 없음"))
             }
             .observe(on: MainScheduler.instance)
             .bind { [weak self] coord in
@@ -97,7 +98,8 @@ final class RunnerCategoryViewController: UIViewController {
                 let detailVC = RunnerDetailViewController()
                 detailVC.latitude = lat
                 detailVC.longitude = lon
-                detailVC.locationName = "검색결과"
+                detailVC.locationName = coord.address
+                detailVC.isFromSearch = true
                 self.navigationController?.pushViewController(detailVC, animated: true)
             }
             .disposed(by: disposeBag)

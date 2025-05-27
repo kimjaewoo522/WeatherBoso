@@ -7,11 +7,12 @@
 
 import Foundation
 
-struct GeocodeResponse: Codable {
+struct GeocodeResponse: Decodable {
     let addresses: [GeocodeAddress]
 }
 
-struct GeocodeAddress: Codable {
+struct GeocodeAddress: Decodable {
+    let roadAddress: String // 도로명주소
     let x: String  // 경도 (longitude)
     let y: String  // 위도 (latitude)
 }

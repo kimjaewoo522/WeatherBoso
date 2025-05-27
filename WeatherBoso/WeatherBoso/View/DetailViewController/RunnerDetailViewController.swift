@@ -6,6 +6,7 @@ final class RunnerDetailViewController: UIViewController {
     var latitude: Double?
     var longitude: Double?
     var locationName: String?
+    var isFromSearch: Bool = false
     
     private let weatherInfoView = CustomWeatherInfoView()
     private let viewModel = RunnerViewModel.shared
@@ -50,7 +51,7 @@ final class RunnerDetailViewController: UIViewController {
 
                 self.weatherInfoView.setImageTC(imageName, .black)
                 self.weatherInfoView.makeHeaderStack(
-                    title: "뛰어 보소",
+                    title: "뛰어보소",
                     location: self.locationName ?? "",
                     temperature: "\(Int(currentWeather.main.temp))℃",
                     status: currentWeather.weather.first?.description ?? "정보 없음"
