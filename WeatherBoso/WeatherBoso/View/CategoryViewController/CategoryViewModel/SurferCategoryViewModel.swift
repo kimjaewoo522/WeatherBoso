@@ -58,7 +58,7 @@ final class SurferCategoryViewModel {
                         }
                 }
                 
-                return Observable.zip(beachObservables)
+                return Observable.combineLatest(beachObservables)
                     .map { beaches in
                         [BeachSection(items: beaches)]
                     }
