@@ -9,32 +9,32 @@ import UIKit
 
 class RunnerCell: UICollectionViewCell {
     
-    static let id = "AnglerCell"
+    static let id = "RunnerCell"
     
     let locabg: UIImageView = {
-        let b = UIImageView()
-        b.contentMode = .scaleAspectFill
-        b.clipsToBounds = true
-        b.layer.cornerRadius = 20
-        return b
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+//        imageView.clipsToBounds = true
+//        imageView.layer.cornerRadius = 20
+        return imageView
     }()
     
     let locaName: UILabel = {
-        let n = UILabel()
-        n.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
-        return n
+        let label = UILabel()
+        label.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
+        return label
     }()
     
     let tempLabel: UILabel = {
-        let t = UILabel()
-        t.font = UIFont(name: "GmarketSansTTFLight", size: 12)
-        return t
+        let label = UILabel()
+        label.font = UIFont(name: "GmarketSansTTFLight", size: 12)
+        return label
     }()
     
     let statusLabel: UILabel = {
-        let s = UILabel()
-        s.font = UIFont(name: "GmarketSansTTFLight", size: 14)
-        return s
+        let label = UILabel()
+        label.font = UIFont(name: "GmarketSansTTFLight", size: 14)
+        return label
     }()
     
     override init(frame: CGRect) {
@@ -71,7 +71,11 @@ class RunnerCell: UICollectionViewCell {
         }
     }
     
-    
-    
+    func configure(with runningSpot: RunningSpot) {
+        locabg.image = UIImage(named: runningSpot.imageName)
+        locaName.text = runningSpot.name
+        tempLabel.text = runningSpot.temperature
+        statusLabel.text = runningSpot.weatherStatus
+    }
 }
 
