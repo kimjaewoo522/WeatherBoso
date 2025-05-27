@@ -125,15 +125,15 @@ final class BaseBallCategoryViewController: UIViewController{
             .disposed(by: disposeBag)
         
         // 디테일 화면으로 이동
-        collection.rx.modelSelected(StadiumModel.self)
-            .bind { [weak self] stadium in
-                guard let self = self,
-                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
-                
-                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
-                self.navigationController?.pushViewController(detailVC, animated: true)
-            }
-            .disposed(by: disposeBag)
+//        collection.rx.modelSelected(StadiumModel.self)
+//            .bind { [weak self] stadium in
+//                guard let self = self,
+//                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
+//                
+//                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
+//                self.navigationController?.pushViewController(detailVC, animated: true)
+//            }
+//            .disposed(by: disposeBag)
         
         
         searchBar.rx.text.orEmpty
