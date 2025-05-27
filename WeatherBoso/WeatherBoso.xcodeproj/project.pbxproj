@@ -13,8 +13,6 @@
 		4C033DE02DDC333D00970DB1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DDF2DDC333D00970DB1 /* RxDataSources */; };
 		4C033DE22DDC346500970DB1 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DE12DDC346500970DB1 /* RxRelay */; };
 		4C033DE52DDC348A00970DB1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DE42DDC348A00970DB1 /* Alamofire */; };
-		B8C7623A2DDF43D0008CD626 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B8C762392DDF43D0008CD626 /* RxDataSources */; };
-		B8C7653D2DE4B9BA008CD626 /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = B8C7653C2DE4B9BA008CD626 /* RxGesture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,7 +51,6 @@
 				4C033DE52DDC348A00970DB1 /* Alamofire in Frameworks */,
 				4C033DE02DDC333D00970DB1 /* RxDataSources in Frameworks */,
 				4C033DD32DDC32DD00970DB1 /* SnapKit in Frameworks */,
-				B8C7653D2DE4B9BA008CD626 /* RxGesture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,8 +99,6 @@
 				4C033DDF2DDC333D00970DB1 /* RxDataSources */,
 				4C033DE12DDC346500970DB1 /* RxRelay */,
 				4C033DE42DDC348A00970DB1 /* Alamofire */,
-				B8C762392DDF43D0008CD626 /* RxDataSources */,
-				B8C7653C2DE4B9BA008CD626 /* RxGesture */,
 			);
 			productName = WeatherBoso;
 			productReference = 4C033DB92DDC328400970DB1 /* WeatherBoso.app */;
@@ -138,8 +133,6 @@
 				4C033DD62DDC32F100970DB1 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				4C033DDC2DDC333D00970DB1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				4C033DE32DDC348A00970DB1 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				B8C762382DDF43D0008CD626 /* XCRemoteSwiftPackageReference "RxDataSources" */,
-				B8C7653B2DE4B9BA008CD626 /* XCRemoteSwiftPackageReference "RxGesture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4C033DBA2DDC328400970DB1 /* Products */;
@@ -401,22 +394,6 @@
 				minimumVersion = 5.10.2;
 			};
 		};
-		B8C762382DDF43D0008CD626 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.2;
-			};
-		};
-		B8C7653B2DE4B9BA008CD626 /* XCRemoteSwiftPackageReference "RxGesture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxGesture.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -449,16 +426,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C033DE32DDC348A00970DB1 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		B8C762392DDF43D0008CD626 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B8C762382DDF43D0008CD626 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B8C7653C2DE4B9BA008CD626 /* RxGesture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B8C7653B2DE4B9BA008CD626 /* XCRemoteSwiftPackageReference "RxGesture" */;
-			productName = RxGesture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
