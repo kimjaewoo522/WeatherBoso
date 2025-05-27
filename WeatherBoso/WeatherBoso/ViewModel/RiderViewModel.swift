@@ -20,12 +20,11 @@ class RiderViewModel {
     
     //날씨 예보를 담는 Rx subject
     let weatherEntry = BehaviorSubject<[WeatherEntry]?>(value: nil)
-    
     //대기질 정보를 담는 Rx Subject
     let airPollutionResponse = BehaviorSubject<AirPollutionData?>(value: nil)
-    
     // 현재 날씨의 정보를 담는 Rx Subject
     let nowWeather = BehaviorSubject<WeatherEntry?>(value: nil)
+    
     
     func fetchWeatherInfo () {
         let urlStirng = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric&lang=kr"
@@ -85,6 +84,7 @@ class RiderViewModel {
     func updateLocation(lat: Double, lon: Double) {
         self.lat = lat
         self.lon = lon
+        
         // 새 위치에 대해 API 다시 호출
         fetchWeatherInfo()
         fetchAirQuality()

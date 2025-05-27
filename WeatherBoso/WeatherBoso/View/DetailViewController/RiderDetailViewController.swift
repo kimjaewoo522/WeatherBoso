@@ -18,18 +18,7 @@ class RiderDetailViewController: UIViewController {
     private var weatherInfo: WeatherInfo?
     private let disposeBag = DisposeBag()
     private var airPolluiton: AirPollutionData?
-    private let scrollView = UIScrollView()
-    private let containerView = UIView()
-    private let refreshControl = UIRefreshControl()
     private var selectedLocationName: String = "부산" // 기본값
-    private let toggleTempButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("🔄화씨", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        return button
-    }()
-    private var isCelsius = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +42,7 @@ class RiderDetailViewController: UIViewController {
                 self.customWeatherInfo.makeHeaderStack(
                     title: "달려보소",
                     location: self.selectedLocationName,
-                    temperature: self.formattedTemp(weather.main.temp),
+                    temperature: "\(Int(weather.main.temp))°",
                     status: weather.weather.first?.description ?? "이야 맑다"
                 )
                 
@@ -71,37 +60,14 @@ class RiderDetailViewController: UIViewController {
                     WeatherData(title: "미세먼지", value: "\(pm10)"),
                     WeatherData(title: "초미세먼지", value: "\(pm25)")
                 ])
-                customWeatherInfo.setImageTC("\(weatherStatus)", .orange)
+                customWeatherInfo.setImageTC("\(weatherStatus)", .blue)
             }, onError: { error in
                 print("에러 발생: \(error)")
             })
             .disposed(by: disposeBag)
         
-        //시간별 날씨 데이터
-        let forecastStream = viewModel.weatherEntry.compactMap { $0 }
-        forecastStream
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] forecastList in
-                guard let self = self else { return }
-                
-                let timeData: [TimeWeatherInfo] = forecastList.prefix(5).map { entry in
-                    let date = Date(timeIntervalSince1970: entry.dt)
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "HH:mm"
-                    let timeString = formatter.string(from: date)
-                    
-                    let iconCode = entry.weather.first?.icon ?? "01d"
-                    let tempText = "\(Int(entry.main.temp))°C"
-                    
-                    return TimeWeatherInfo(time: timeString, imageSource: .url(iconCode: iconCode), value: tempText)
-                }
-                
-                self.customWeatherInfo.makeTimeStack(data: timeData)
-            })
-            .disposed(by: disposeBag)
+       
     }
-    
-    
     
     private enum DustType {
         case pm10, pm25
@@ -130,116 +96,49 @@ class RiderDetailViewController: UIViewController {
     }
     
     private func WeatherStatus(for value: String, type: WeatherType) -> String {
-        switch type {
-        case .main:
-            switch value {
-            case "Thunderstorm": return "Riding2"
-            case "Drizzle": return "Riding2"
-            case "Rain": return "Riding2"
-            case "Snow": return "Riding3"
-            case "Atmosphere": return "Riding2"
-            default: return "Bike"
+            switch type {
+            case .main:
+                switch value {
+                case "Thunderstorm": return "Riding2"
+                case "Drizzle": return "Riding2"
+                case "Rain": return "Riding2"
+                case "Snow": return "Riding3"
+                case "Atmosphere": return "Riding2"
+                default: return "Bike"
+                }
+//                •    “맑음”
+//                •    “구름 조금”
+//                •    “흐림”
+//                •    “약한 비”
+//                •    “비”
+//                •    “강한 비”
+//                •    “눈”
+//                •    “소나기”
+//                •    “안개”
+//                •    “황사”
+//                •    “연무”
+//                •    “박무”
+//                •    “천둥번개”
+                //Bike 기본
+                //Riding2 비
+                //Riding3 눈
             }
-            //                •    “맑음”
-            //                •    “구름 조금”
-            //                •    “흐림”
-            //                •    “약한 비”
-            //                •    “비”
-            //                •    “강한 비”
-            //                •    “눈”
-            //                •    “소나기”
-            //                •    “안개”
-            //                •    “황사”
-            //                •    “연무”
-            //                •    “박무”
-            //                •    “천둥번개”
-            //Bike 기본
-            //Riding2 비
-            //Riding3 눈
         }
-    }
-    
-    private func formattedTemp(_ temp: Double) -> String {
-        if isCelsius {
-            return "\(Int(temp))°C"
-        } else {
-            let f = (temp * 9/5) + 32
-            return "\(Int(f))°F"
-        }
-    }
-    private func updateTemperatureDisplay() {
-        guard let weather = nowWeather else { return }
-        
-        // 온도/상태 업데이트
-        customWeatherInfo.makeHeaderStack(
-            title: "달려보소",
-            location: selectedLocationName,
-            temperature: formattedTemp(weather.main.temp),
-            status: weather.weather.first?.description ?? "정보 없음"
-        )
-        
-        // 시간별 예보도 다시 변환해서 업데이트
-        guard let list = try? viewModel.weatherEntry.value() else { return }
-        
-        let timeData: [TimeWeatherInfo] = list.prefix(5).map { entry in
-            let date = Date(timeIntervalSince1970: entry.dt)
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm"
-            let timeString = formatter.string(from: date)
-            
-            let iconCode = entry.weather.first?.icon ?? "01d"
-            let tempText = formattedTemp(entry.main.temp)
-            
-            return TimeWeatherInfo(time: timeString, imageSource: .url(iconCode: iconCode), value: tempText)
-        }
-        
-        customWeatherInfo.makeTimeStack(data: timeData)
-    }
-    
     
     
     //MARK: - UI구성
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(scrollView)
-        scrollView.addSubview(customWeatherInfo)
-        scrollView.addSubview(toggleTempButton)
+        view.addSubview(customWeatherInfo)
         //customWeatherInfo에 대한 제약조건 ( 뷰 전체 )
-        scrollView.alwaysBounceVertical = true
-        scrollView.refreshControl = refreshControl
-        scrollView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
-        }
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
-        toggleTempButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(180)
-            make.leading.equalToSuperview().offset(39)
-        }
-        toggleTempButton.rx.tap
-            .bind { [weak self] in
-                guard let self = self else { return }
-                self.isCelsius.toggle()
-                self.updateTemperatureDisplay()
-            }
-            .disposed(by: disposeBag)
-        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
-    
     
     //MARK: - 위치 관련
     func setLocation(lat: Double, lon: Double, locationName: String) {
         selectedLocationName = locationName
         viewModel.updateLocation(lat: lat, lon: lon)
-    }
-    @objc private func refreshData() {
-        viewModel.fetchWeatherInfo()
-        viewModel.fetchAirQuality()
-        
-        // 새로고침 끝내기 (약간의 딜레이를 줘도 좋음)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.refreshControl.endRefreshing()
-        }
     }
 }

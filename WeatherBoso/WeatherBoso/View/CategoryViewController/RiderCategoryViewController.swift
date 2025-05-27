@@ -14,51 +14,51 @@ struct LocationWeatherModel {
     let name: String
     let lat: Double
     let lon: Double
-    let temp: Double?
-    let description: String?
+    let temp: Double
+    let description: String
     let imageName: String
 }
 
 final class RiderCategoryViewController: UIViewController {
     
     private let searchBar = SearchBar()
-    private let weatherService = WeatherService()
+    
     private let disposeBag = DisposeBag()
     lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
     )
     
-    private var locations: [LocationWeatherModel] = [
+    private let locations: [LocationWeatherModel] = [
             LocationWeatherModel(
                 name: "경기도 남양주 화음길",
                 lat: 37.6519,
                 lon: 127.2165,
-                temp: nil,
-                description: "날씨 불러오는 중",
+                temp: 25,
+                description: "Mostly Sunny",
                 imageName: "hwaEumgil"
             ),
             LocationWeatherModel(
                 name: "경상남도 남해 19번 국도",
                 lat: 34.8374,
                 lon: 127.8635,
-                temp: nil,
-                description: "날씨 불러오는 중",
+                temp: 25,
+                description: "Mostly Sunny",
                 imageName: "namHae"
             ),
             LocationWeatherModel(
                 name: "제주도 신창 풍차 해안도로",
                 lat: 33.3004,
                 lon: 126.1743,
-                temp: nil,
-                description: "날씨 불러오는 중",
+                temp: 25,
+                description: "Mostly Sunny",
                 imageName: "sinChang"
             ),
             LocationWeatherModel(
                 name: "강원도 새천년 해안도로",
                 lat: 37.6024,
                 lon: 129.1175,
-                temp: nil,
-                description: "날씨 불러오는 중",
+                temp: 25,
+                description: "Mostly Sunny",
                 imageName: "saecheonnyeon"
             )
     ]
@@ -88,7 +88,6 @@ final class RiderCategoryViewController: UIViewController {
         setupConstraints()
         setupBindings()
         setupCollectionView()
-        fetchAllLocationWeathersUsingViewModel()
     }
     
     private func setupViews() {
@@ -158,37 +157,6 @@ final class RiderCategoryViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
-    
-    private func fetchAllLocationWeathersUsingViewModel() {
-        for (index, location) in locations.enumerated() {
-            let viewModel = RiderViewModel()
-            
-            // viewModel의 nowWeather Subject에서 한 번만 값을 받아옴
-            viewModel.nowWeather
-                .compactMap { $0 }
-                .take(1) // 첫 번째 값만 받도록 제한
-                .observe(on: MainScheduler.instance)
-                .subscribe(onNext: { [weak self] weather in
-                    guard let self = self else { return }
-                    
-                    let updated = LocationWeatherModel(
-                        name: location.name,
-                        lat: location.lat,
-                        lon: location.lon,
-                        temp: weather.main.temp,
-                        description: weather.weather.first?.description,
-                        imageName: location.imageName
-                    )
-                    
-                    self.locations[index] = updated
-                    self.collection.reloadItems(at: [IndexPath(item: index, section: 0)])
-                })
-                .disposed(by: disposeBag)
-            
-            // 위치 설정 + 날씨 데이터 fetch 시작
-            viewModel.updateLocation(lat: location.lat, lon: location.lon)
-        }
-    }
 }
 
 extension RiderCategoryViewController: UICollectionViewDataSource {
@@ -203,7 +171,7 @@ extension RiderCategoryViewController: UICollectionViewDataSource {
 
         let model = locations[indexPath.item]
         cell.locaName.text = model.name
-        cell.tempLabel.text = model.temp != nil ? "\(Int(model.temp!))℃" : "로딩 중..."
+        cell.tempLabel.text = "\(Int(model.temp))℃"
         cell.statusLabel.text = model.description
         cell.locabg.image = UIImage(named: model.imageName)
 
