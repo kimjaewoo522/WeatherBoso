@@ -39,7 +39,7 @@ class BaseBallDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setWeatherStack()
+        setWeatherStack(with: weatherInDetails)
         setUI()
         bind()
         
@@ -47,7 +47,7 @@ class BaseBallDetailViewController: UIViewController {
         viewModel.fetchWeatherPerHour(for: stadium)
     }
     
-    private func  setWeatherStack() {
+    private func  setWeatherStack(with rain: WeatherResponse) {
         detailCustomView.makeHeaderStack(
             title: "야구보소",
             location: stadium.stadiumName,
@@ -58,11 +58,22 @@ class BaseBallDetailViewController: UIViewController {
         detailCustomView.makeLargeStack(items: [
             WeatherData(title: "강수량", value: "\(weatherInDetails.rain?.the1H ?? 0.0) mm"),
             WeatherData(title: "풍속", value: "\(weatherInDetails.wind?.speed ?? 0.0) m/s"),
-            WeatherData(title: "구름량", value: "\(weatherInDetails.clouds?.all ?? 0)%"),
+             WeatherData(title: "구름량", value: "\(weatherInDetails.clouds?.all ?? 0)%"),
             WeatherData(title: "습도", value: "\(weatherInDetails.main.humidity)%"),
         ])
         
         detailCustomView.setImageTC("BaseBall", .black)
+        
+        let rainfall = rain.rain?.the1H ?? 0.0
+       
+        let imageName: String
+        switch rainfall {
+        case ..<0.1:
+            imageName = "Baseball2"
+        default:
+            imageName = "Baseball"
+        }
+        
     }
     
     private func setUI() {
@@ -106,7 +117,7 @@ class BaseBallDetailViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        setWeatherStack()
+        setWeatherStack(with: weatherInDetails)
         
         
     }

@@ -11,9 +11,6 @@ import RxCocoa
 
 class BaseBallViewModel {
     
-    /// binding을 위해 꼭 필요
-    //    let stadiums = BehaviorSubject<[StadiumModel]>(value: [])
-    
     let disposedBag = DisposeBag()
     let weatherPerDay = BehaviorRelay<[StadiumModel]>(value: [])
     let categoryHomeScreen = BehaviorRelay<[StadiumModel]>(value: [])
@@ -32,10 +29,11 @@ class BaseBallViewModel {
     
     init() {}
     
-    /// 밖에서 읽을 수는 있으나 수정 불가
+    // 구장 정보로 초기에 로드되는 고정데이터
     var stadiumInfo: [StadiumModel] = BaseballStadiumData.all
     
-    // 디스패치그룹
+    // 디스패치그룹 for 카테고리뷰
+    //
     func fetchAllStadiumWeather() {
         var updatedStadiums = Array(repeating: StadiumModel.empty, count: stadiumInfo.count)
         var weatherResponses: [WeatherResponse] = Array(
@@ -62,15 +60,7 @@ class BaseBallViewModel {
                     updatedStadiums[index] = updated
                     group.leave()
                 }, onFailure: { error in
-                    print("에러1: \(error.localizedDescription)")
                     
-                    if let urlError = error as? URLError {
-                        print("URLError2: \(urlError)")
-                    }
-                    
-                    if let afError = error as? DecodingError {
-                        print("DecodingError3: \(afError)")
-                    }
                     group.leave()
                 })
                 .disposed(by: disposedBag)
@@ -136,6 +126,7 @@ class BaseBallViewModel {
                             timeIntervalSince1970: TimeInterval(item.dt)))
                     let temp = "\(Int(item.main.temp))°"
                     let icon = item.weather.first?.icon ?? ""
+                    let iconCode = item.weather.first?.icon ?? "01d"
                     let imageName: String
                     if icon.contains("01") { imageName = "sunny" }
                     else if icon.contains("n") { imageName = "night" }
@@ -143,7 +134,10 @@ class BaseBallViewModel {
                     else if icon.contains("13") { imageName = "snow" }
                     else { imageName = "cloud" }
                     
-                    return TimeWeatherInfo(time: time, image: imageName, value: temp)
+                    return TimeWeatherInfo(
+                        time: time,
+                        imageSource: .url(iconCode: iconCode),
+                        value: temp)
                 }
                 
                 self.weatherPerHour.accept(hourlyWeather)
