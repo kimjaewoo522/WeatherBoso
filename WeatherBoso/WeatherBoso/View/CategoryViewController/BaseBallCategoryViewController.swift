@@ -114,7 +114,8 @@ final class BaseBallCategoryViewController: UIViewController{
     }
     
     private func bind() {
-        viewModel.weatherPerDay
+        // 컬렉션뷰 바인딩
+        viewModel.categoryHomeScreen
             .bind(to: collection.rx.items(
                 cellIdentifier: BaseballCell.id,
                 cellType: BaseballCell.self
@@ -122,7 +123,29 @@ final class BaseBallCategoryViewController: UIViewController{
                 cell.setData(with: model)
             }
             .disposed(by: disposeBag)
-
+        
+        // 디테일 화면으로 이동
+        collection.rx.modelSelected(StadiumModel.self)
+            .bind { [weak self] stadium in
+                guard let self = self,
+                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
+                
+                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
+                self.navigationController?.pushViewController(detailVC, animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        
+        searchBar.rx.text.orEmpty
+            .distinctUntilChanged()
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .bind { [weak self] keyword in
+                self?.viewModel.searchStadiums(for: keyword)
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.categoryHomeScreen.accept(viewModel.weatherPerDay.value)
+        
     }
 }
 
