@@ -68,10 +68,18 @@ final class SurferCategoryViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        viewModel.fetchBeachSections()
+        // 1. SearchBar 입력을 ViewModel로 전달
+        searchBar.rx.text.orEmpty
+            .bind(to: viewModel.searchText)
+            .disposed(by: disposeBag)
+
+        // 2. ViewModel의 필터링된 섹션을 collectionView에 바인딩
+        viewModel.fetchFilteredBeachSections()
+            .observe(on: MainScheduler.instance)
             .bind(to: collection.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
+
 
     private func setConstraints() {
         customNavBar.snp.makeConstraints {

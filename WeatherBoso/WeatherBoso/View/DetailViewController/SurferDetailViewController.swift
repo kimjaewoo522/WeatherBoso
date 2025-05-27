@@ -56,10 +56,6 @@ final class SurferDetailViewController: UIViewController {
             $0.edges.width.equalToSuperview()
         }
         
-        customWeatherInfo.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
