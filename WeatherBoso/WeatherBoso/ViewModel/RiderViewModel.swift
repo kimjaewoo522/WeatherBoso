@@ -86,7 +86,7 @@ class RiderViewModel {
         self.lon = lon
         
         // 새 위치에 대해 API 다시 호출
-        fecthWeatherInfo()
+        fetchWeatherInfo()
         fetchAirQuality()
     }
 }

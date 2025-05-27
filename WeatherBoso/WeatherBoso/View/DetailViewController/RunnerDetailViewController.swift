@@ -46,8 +46,8 @@ final class RunnerDetailViewController: UIViewController {
                 if let mainCondition = weather.weather.first?.main {
                     if mainCondition.lowercased() == "Rain" {
                         imageName = "Running4"
-                        switch temp {
                     } else {
+                        switch temp {
                         case ..<18:
                             imageName = "Running3"
                         case 18..<30:
