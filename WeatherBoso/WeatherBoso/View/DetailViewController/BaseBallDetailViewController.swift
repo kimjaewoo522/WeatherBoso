@@ -25,6 +25,15 @@ class BaseBallDetailViewController: UIViewController {
         rain: nil,
         dt: 0
     )
+    private let toggleTempButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("🔄화씨", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return button
+    }()
+    
+    private var isCelsius = true
     
     init(stadium: StadiumModel, weather: WeatherResponse) {
         self.stadium = stadium
@@ -40,8 +49,9 @@ class BaseBallDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setWeatherStack(with: weatherInDetails)
-        setUI()
         bind()
+        setUI()
+//        bind()
         
         viewModel.fetchcurrentWeather(for: stadium)
         viewModel.fetchWeatherPerHour(for: stadium)
@@ -78,9 +88,23 @@ class BaseBallDetailViewController: UIViewController {
     
     private func setUI() {
         view.addSubview(detailCustomView)
+        view.addSubview(toggleTempButton)
         detailCustomView.snp.makeConstraints{
             $0.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
+        
+        toggleTempButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(180)
+            make.leading.equalToSuperview().offset(39)
+        }
+        toggleTempButton.rx.tap
+            .bind { [weak self] in
+                guard let self = self else { return }
+                self.isCelsius.toggle()
+                self.bind()
+            }
+            .disposed(by: disposeBag)
+        
     }
     
     
@@ -120,6 +144,15 @@ class BaseBallDetailViewController: UIViewController {
         setWeatherStack(with: weatherInDetails)
         
         
+    }
+    
+    private func formattedTemp(_ temp: Double) -> String {
+        if isCelsius {
+            return "\(Int(temp))°C"
+        } else {
+            let f = (temp * 9/5) + 32
+            return "\(Int(f))°F"
+        }
     }
     
     
