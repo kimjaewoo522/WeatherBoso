@@ -207,7 +207,7 @@ final class RiderCategoryViewController: UIViewController {
         geocoder.geocodeAddressString(address) { [weak self] placemarks, error in
             guard let self = self else { return }
             
-            if let error = error {
+            if error != nil {
                 return
             }
             
