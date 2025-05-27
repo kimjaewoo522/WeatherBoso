@@ -77,9 +77,10 @@ class CustomWeatherInfoView: UIView {
     }
     
     private func setupLayout() {
+
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(130)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview().inset(10)
             $0.width.height.equalTo(200)
         }
         headerStack.snp.makeConstraints {
@@ -87,8 +88,8 @@ class CustomWeatherInfoView: UIView {
             $0.leading.trailing.equalToSuperview().inset(15)
         }
         largeStack.snp.makeConstraints {
-            $0.top.equalTo(headerStack.snp.bottom).offset(250) // 상단 스택과 간격
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalTo(headerStack.snp.bottom).offset(200) // 상단 스택과 간격
+            $0.leading.trailing.equalToSuperview().inset(25)
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
         timeStack.snp.makeConstraints {
@@ -110,8 +111,8 @@ class CustomWeatherInfoView: UIView {
             headerStack.addArrangedSubview($0)
         }
         // 라벨 간 간격 지정
-        headerStack.setCustomSpacing(10, after: titleLabel)
-        headerStack.setCustomSpacing(10, after: locationStatusLabel)
+//        headerStack.setCustomSpacing(10, after: titleLabel)
+//        headerStack.setCustomSpacing(10, after: locationStatusLabel)
     }
     
     // 중단 정보 설정
