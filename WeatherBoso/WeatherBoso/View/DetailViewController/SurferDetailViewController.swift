@@ -156,9 +156,9 @@ final class SurferDetailViewController: UIViewController {
             }
             
             return TimeWeatherInfo(time: timeString, imageSource: WeatherImageSource.local(named: waveImage), value: "\(height)m")
+
         }
-        
-        
+       
         customWeatherInfo.makeTimeStack(data: waveTimeData)
     }
 }

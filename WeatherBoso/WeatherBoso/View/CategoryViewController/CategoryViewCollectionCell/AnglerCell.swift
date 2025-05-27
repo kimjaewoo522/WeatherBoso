@@ -12,29 +12,27 @@ class AnglerCell: UICollectionViewCell {
     static let id = "AnglerCell"
     
     let locabg: UIImageView = {
-        let b = UIImageView()
-        b.contentMode = .scaleAspectFill
-        b.clipsToBounds = true
-        b.layer.cornerRadius = 20
-        return b
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
     }()
     
     let locaName: UILabel = {
-        let n = UILabel()
-        n.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
-        return n
+        let locationLabel = UILabel()
+        locationLabel.font = UIFont(name: "GmarketSansTTFMedium", size: 20)
+        return locationLabel
     }()
     
     let tempLabel: UILabel = {
-        let t = UILabel()
-        t.font = UIFont(name: "GmarketSansTTFLight", size: 12)
-        return t
+        let tempLabel = UILabel()
+        tempLabel.font = UIFont(name: "GmarketSansTTFLight", size: 12)
+        return tempLabel
     }()
     
     let statusLabel: UILabel = {
-        let s = UILabel()
-        s.font = UIFont(name: "GmarketSansTTFLight", size: 14)
-        return s
+        let statusLabel = UILabel()
+        statusLabel.font = UIFont(name: "GmarketSansTTFLight", size: 14)
+        return statusLabel
     }()
     
     override init(frame: CGRect) {
