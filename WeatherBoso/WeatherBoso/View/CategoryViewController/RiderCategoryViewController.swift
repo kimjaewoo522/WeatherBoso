@@ -14,8 +14,8 @@ struct LocationWeatherModel {
     let name: String
     let lat: Double
     let lon: Double
-    let temp: Double
-    let description: String
+    let temp: Double?
+    let description: String?
     let imageName: String
 }
 
@@ -28,7 +28,7 @@ final class RiderCategoryViewController: UIViewController {
         frame: .zero, collectionViewLayout: collectionSet()
     )
     
-    private let locations: [LocationWeatherModel] = [
+    private var locations: [LocationWeatherModel] = [
             LocationWeatherModel(
                 name: "경기도 남양주 화음길",
                 lat: 37.6519,
@@ -42,7 +42,7 @@ final class RiderCategoryViewController: UIViewController {
                 lat: 34.8374,
                 lon: 127.8635,
                 temp: 25,
-                description: "Mostly Sunny",
+                description: "맑음",
                 imageName: "namHae"
             ),
             LocationWeatherModel(
@@ -88,6 +88,7 @@ final class RiderCategoryViewController: UIViewController {
         setupConstraints()
         setupBindings()
         setupCollectionView()
+        
     }
     
     private func setupViews() {
@@ -171,7 +172,7 @@ extension RiderCategoryViewController: UICollectionViewDataSource {
 
         let model = locations[indexPath.item]
         cell.locaName.text = model.name
-        cell.tempLabel.text = "\(Int(model.temp))℃"
+        cell.tempLabel.text = "\(Int(model.temp ?? 0))℃"
         cell.statusLabel.text = model.description
         cell.locabg.image = UIImage(named: model.imageName)
 

@@ -46,8 +46,8 @@ class RiderDetailViewController: UIViewController {
                     status: weather.weather.first?.description ?? "이야 맑다"
                 )
                 
-                let pm10Value = Int(air.components.pm10 ?? 0)
-                let pm25Value = Int(air.components.pm25 ?? 0)
+                let pm10Value = Int(air.components.pm10)
+                let pm25Value = Int(air.components.pm25)
                 let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
                 let weatherStatusValue = String(weatherInfo?.main ?? "")
@@ -60,7 +60,7 @@ class RiderDetailViewController: UIViewController {
                     WeatherData(title: "미세먼지", value: "\(pm10)"),
                     WeatherData(title: "초미세먼지", value: "\(pm25)")
                 ])
-                customWeatherInfo.setImageTC("\(weatherStatus)", .blue)
+                customWeatherInfo.setImageTC("\(weatherStatus)", .orange)
             }, onError: { error in
                 print("에러 발생: \(error)")
             })
