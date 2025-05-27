@@ -5,6 +5,8 @@ import RxSwift
 final class RunnerDetailViewController: UIViewController {
     var latitude: Double?
     var longitude: Double?
+    var locationName: String?
+    var isFromSearch: Bool = false
     
     private let weatherInfoView = CustomWeatherInfoView()
     private let viewModel = RunnerViewModel.shared
@@ -33,61 +35,75 @@ final class RunnerDetailViewController: UIViewController {
         guard let lat = latitude, let lon = longitude else { return }
         viewModel.fetchWeatherInfo(lat: lat, lon: lon)
         viewModel.fetchAirQuality(lat: lat, lon: lon)
-        //combineLatest: 두 Observable이 emit할 때마다 가장 최신 값들을 함께 묶어 전달, nil을 제거한 유효값만 전달
-        Observable
-            .combineLatest(viewModel.nowWeather.compactMap { $0 }, viewModel.airPollutionResponse.compactMap { $0 })
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] (weather: WeatherEntry, air: AirPollutionData) in
-                            guard let self = self else { return }
-                            let air = air
 
-                let temp = weather.main.temp
-                let imageName: String
-                if let mainCondition = weather.weather.first?.main {
-                    if mainCondition.lowercased() == "Rain" {
-                        imageName = "Running4"
-                    } else {
-                        switch temp {
-                        case ..<18:
-                            imageName = "Running3"
-                        case 18..<30:
-                            imageName = "Running"
-                        default:
-                            imageName = "Running2"
-                        }
-                    }
-                } else {
-                    // 날씨 정보가 없을 경우 기본 이미지
-                    imageName = "Running"
-                }
+        Observable
+            .combineLatest(
+                viewModel.weatherEntry.compactMap { $0 },
+                viewModel.nowWeather.compactMap { $0 },
+                viewModel.airPollutionResponse.compactMap { $0 }
+            )
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] (weatherList, currentWeather, air) in
+                guard let self = self else { return }
+
+                let imageName = self.imageName(for: currentWeather.main.temp,
+                                               mainCondition: currentWeather.weather.first?.main)
 
                 self.weatherInfoView.setImageTC(imageName, .black)
-                
                 self.weatherInfoView.makeHeaderStack(
-                    title: "뛰어 보소",
-                    location: "서울특별시",
-                    temperature: "\(Int(weather.main.temp))℃",
-                    status: weather.weather.first?.description ?? "정보 없음"
+                    title: "뛰어보소",
+                    location: self.locationName ?? "",
+                    temperature: "\(Int(currentWeather.main.temp))℃",
+                    status: currentWeather.weather.first?.description ?? "정보 없음"
                 )
-                
-                let humidity = "\(weather.main.humidity)%"
-                let windSpeed = "\(weather.wind.speed)m/s"
 
-                let pm10Value = Int(air.components.pm10)
-                let pm25Value = Int(air.components.pm25)
-                
-                let pm10 = self.airQualityStatus(for: pm10Value, type: .pm10)
-                let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
-                
-                let weatherDataList = [
-                    WeatherData(title: "습도", value: humidity),
-                    WeatherData(title: "풍속", value: windSpeed),
-                    WeatherData(title: "미세먼지", value: pm10),
-                    WeatherData(title: "초미세먼지", value: pm25)
-                ]
+                let weatherDataList = self.makeWeatherDataList(weather: currentWeather, air: air)
                 self.weatherInfoView.makeLargeStack(items: weatherDataList)
+
+                let timeInfos: [TimeWeatherInfo] = weatherList.prefix(5).compactMap { entry in
+                    let date = Date(timeIntervalSince1970: entry.dt)
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "HH:mm"
+                    let timeString = formatter.string(from: date)
+                    guard let iconCode = entry.weather.first?.icon else { return nil }
+                    let tempValue = "\(Int(entry.main.temp))°C"
+                    return TimeWeatherInfo(time: timeString, imageSource: .url(iconCode: iconCode), value: tempValue)
+                }
+                self.weatherInfoView.makeTimeStack(data: timeInfos)
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func imageName(for temp: Double, mainCondition: String?) -> String {
+        guard let condition = mainCondition?.lowercased() else {
+            return "Running"
+        }
+
+        if condition == "rain" {
+            return "Running4"
+        } else {
+            switch temp {
+            case ..<18: return "Running3"
+            case 18..<30: return "Running"
+            default: return "Running2"
+            }
+        }
+    }
+    
+    private func makeWeatherDataList(weather: WeatherEntry, air: AirPollutionData) -> [WeatherData] {
+        let humidity = "\(weather.main.humidity)%"
+        let windSpeed = "\(weather.wind.speed)m/s"
+        let pm10Value = Int(air.components.pm10)
+        let pm25Value = Int(air.components.pm25)
+        let pm10 = airQualityStatus(for: pm10Value, type: .pm10)
+        let pm25 = airQualityStatus(for: pm25Value, type: .pm25)
+
+        return [
+            WeatherData(title: "습도", value: humidity),
+            WeatherData(title: "풍속", value: windSpeed),
+            WeatherData(title: "미세먼지", value: pm10),
+            WeatherData(title: "초미세먼지", value: pm25)
+        ]
     }
     
     private enum DustType {
