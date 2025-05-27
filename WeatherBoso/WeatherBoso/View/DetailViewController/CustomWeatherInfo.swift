@@ -93,8 +93,8 @@ class CustomWeatherInfoView: UIView {
             $0.width.height.equalTo(200)
         }
         imageTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom)
-            $0.centerX.equalToSuperview().offset(5)
+            $0.top.equalTo(imageView.snp.bottom).offset(5)
+            $0.centerX.equalToSuperview()
         }
         headerStack.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
