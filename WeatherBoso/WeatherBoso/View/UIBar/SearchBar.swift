@@ -26,7 +26,7 @@ class SearchBar: UISearchBar {
         self.layer.cornerRadius = 30
         self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 1
-        self.placeholder = "어디 타소?"
+        self.placeholder = "어디 가소?"
         self.setImage(UIImage(systemName: "magnifyingglass"),
                       for: .search, state: .normal)
        
