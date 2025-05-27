@@ -21,7 +21,7 @@ class NetworkManager {
     
     // 네트워크 로직을 수행하고, 결과를 Single 로 리턴함.
     // Single 은 오직 한 번만 값을 뱉는 Observable 이기 때문에 서버에서 데이터를 한 번 불러올 때 적절.
-    func fetch<T: Decodable>(url: URL/*, lat: Double, lon: Double*/) -> Single<T> {
+    func fetch<T: Decodable>(url: URL) -> Single<T> {
         return Single.create { observer in
             print("API 요청 시작: \(url.absoluteString)")
             let session = URLSession(configuration: .default)
