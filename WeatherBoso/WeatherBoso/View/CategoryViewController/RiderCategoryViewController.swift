@@ -9,7 +9,9 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import CoreLocation
 
+// 날씨 데이터 모델 (온도와 설명은 API 요청 후 채워짐)
 struct LocationWeatherModel {
     let name: String
     let lat: Double
@@ -24,6 +26,8 @@ final class RiderCategoryViewController: UIViewController {
     private let searchBar = SearchBar()
     private let weatherService = WeatherService()
     private let disposeBag = DisposeBag()
+    private let geocoder = CLGeocoder()
+    
     lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
     )
@@ -127,6 +131,13 @@ final class RiderCategoryViewController: UIViewController {
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        
+        searchBar.searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .withLatestFrom(searchBar.searchTextField.rx.text.orEmpty)
+            .subscribe(onNext: { [weak self] query in
+                self?.geocodeAndFetchWeather(for: query)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func setupCollectionView() {
@@ -159,6 +170,7 @@ final class RiderCategoryViewController: UIViewController {
         return UICollectionViewCompositionalLayout(section: section)
     }
     
+    //모든 위치의 날씨 정보를 가져오는 함수
     private func fetchAllLocationWeathersUsingViewModel() {
         for (index, location) in locations.enumerated() {
             let viewModel = RiderViewModel()
@@ -187,6 +199,43 @@ final class RiderCategoryViewController: UIViewController {
             
             // 위치 설정 + 날씨 데이터 fetch 시작
             viewModel.updateLocation(lat: location.lat, lon: location.lon)
+        }
+    }
+    
+    //주소를 위경도 바꿔서 날씨를 가져오는 함수
+    private func geocodeAndFetchWeather(for address: String) {
+        geocoder.geocodeAddressString(address) { [weak self] placemarks, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                return
+            }
+            
+            guard let coordinate = placemarks?.first?.location?.coordinate else {
+                return
+            }
+            
+            // 좌표로 날씨 가져오기
+            let viewModel = RiderViewModel()
+            viewModel.nowWeather
+                .compactMap { $0 }
+                .take(1)
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { weather in
+                    let newLocation = LocationWeatherModel(
+                        name: address,
+                        lat: coordinate.latitude,
+                        lon: coordinate.longitude,
+                        temp: weather.main.temp,
+                        description: weather.weather.first?.description ?? "알 수 없음",
+                        imageName: "defaultRoad" // 기본 이미지 이름
+                    )
+                    self.locations.insert(newLocation, at: 0)
+                    self.collection.reloadData()
+                })
+                .disposed(by: self.disposeBag)
+
+            viewModel.updateLocation(lat: coordinate.latitude, lon: coordinate.longitude)
         }
     }
 }

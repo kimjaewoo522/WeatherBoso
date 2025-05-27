@@ -101,8 +101,6 @@ class RiderDetailViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    
-    
     private enum DustType {
         case pm10, pm25
     }
@@ -140,22 +138,6 @@ class RiderDetailViewController: UIViewController {
             case "Atmosphere": return "Riding2"
             default: return "Bike"
             }
-            //                •    “맑음”
-            //                •    “구름 조금”
-            //                •    “흐림”
-            //                •    “약한 비”
-            //                •    “비”
-            //                •    “강한 비”
-            //                •    “눈”
-            //                •    “소나기”
-            //                •    “안개”
-            //                •    “황사”
-            //                •    “연무”
-            //                •    “박무”
-            //                •    “천둥번개”
-            //Bike 기본
-            //Riding2 비
-            //Riding3 눈
         }
     }
     
@@ -192,11 +174,8 @@ class RiderDetailViewController: UIViewController {
             
             return TimeWeatherInfo(time: timeString, imageSource: .url(iconCode: iconCode), value: tempText)
         }
-        
         customWeatherInfo.makeTimeStack(data: timeData)
     }
-    
-    
     
     //MARK: - UI구성
     private func setupUI() {
@@ -224,6 +203,7 @@ class RiderDetailViewController: UIViewController {
                 self.updateTemperatureDisplay()
             }
             .disposed(by: disposeBag)
+        //refreshControl이 사용자가 당겨서 새로고침을 시작했을 때 실행할 메서드를 지정해주는 부분.
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
@@ -233,11 +213,13 @@ class RiderDetailViewController: UIViewController {
         selectedLocationName = locationName
         viewModel.updateLocation(lat: lat, lon: lon)
     }
+    //실제 새로고침할 때 실행되는 함수 정의.
     @objc private func refreshData() {
         viewModel.fetchWeatherInfo()
         viewModel.fetchAirQuality()
         
-        // 새로고침 끝내기 (약간의 딜레이를 줘도 좋음)
+        // 새로고침 끝내기
+        // 새로고침 UI를 1초 뒤에 종료하는 코드
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.refreshControl.endRefreshing()
         }

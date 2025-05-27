@@ -33,8 +33,6 @@ final class RunnerDetailViewController: UIViewController {
         guard let lat = latitude, let lon = longitude else { return }
         viewModel.fetchWeatherInfo(lat: lat, lon: lon)
         viewModel.fetchAirQuality(lat: lat, lon: lon)
-        viewModel.fetchWeatherInfo()
-        viewModel.fetchAirQuality()
         //combineLatest: 두 Observable이 emit할 때마다 가장 최신 값들을 함께 묶어 전달, nil을 제거한 유효값만 전달
         Observable
             .combineLatest(viewModel.nowWeather.compactMap { $0 }, viewModel.airPollutionResponse.compactMap { $0 })

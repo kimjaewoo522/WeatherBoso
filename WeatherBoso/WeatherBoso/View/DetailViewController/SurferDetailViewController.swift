@@ -80,7 +80,6 @@ final class SurferDetailViewController: UIViewController {
     private func reloadWeather() {
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
-        
         output.weather
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weather in
