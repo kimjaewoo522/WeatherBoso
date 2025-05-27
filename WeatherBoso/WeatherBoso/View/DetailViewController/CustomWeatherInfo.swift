@@ -24,6 +24,7 @@ struct TimeWeatherInfo {
 class CustomWeatherInfoView: UIView {
     
     private let titleLabel = UILabel()
+    private let imageTitleLabal = UILabel()
     private let locationStatusLabel = UILabel()
     private let tempLabel = UILabel()
     private let imageView = UIImageView()
@@ -42,10 +43,12 @@ class CustomWeatherInfoView: UIView {
         setupLayout()
     }
     // 외부에서 타이틀 색상 변경 가능
-    func setImageTC(_ imageName: String,_ color: UIColor) {
+    func setImageTC(_ imageName: String, _ color: UIColor, title: String? = nil) {
         titleLabel.textColor = color
         imageView.image = UIImage(named: imageName)
+        imageTitleLabal.text = title
     }
+    
     private func setupUI() {
         // 스택 방향: 세로
         headerStack.axis = .vertical
@@ -64,12 +67,18 @@ class CustomWeatherInfoView: UIView {
         addSubview(largeStack)
         addSubview(imageView)
         addSubview(timeStack)
+        addSubview(imageTitleLabal)
+
         
         // 라벨 스타일 지정
         imageView.contentMode = .scaleAspectFit
         
         titleLabel.font = UIFont(name: "GmarketSansTTFBold", size: 58)
-
+        
+        imageTitleLabal.font = UIFont(name: "GmarketSansTTFLight", size: 17)
+        imageTitleLabal.textColor = .lightGray
+        imageTitleLabal.textAlignment = .center
+        
         locationStatusLabel.font = .systemFont(ofSize: 16)
         locationStatusLabel.textColor = .darkGray
         
@@ -77,18 +86,23 @@ class CustomWeatherInfoView: UIView {
     }
     
     private func setupLayout() {
+
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(130)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview().inset(10)
             $0.width.height.equalTo(200)
+        }
+        imageTitleLabal.snp.makeConstraints {
+            $0.top.equalTo(imageView.snp.bottom)
+            $0.centerX.equalToSuperview()
         }
         headerStack.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.leading.trailing.equalToSuperview().inset(15)
         }
         largeStack.snp.makeConstraints {
-            $0.top.equalTo(headerStack.snp.bottom).offset(250) // 상단 스택과 간격
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalTo(headerStack.snp.bottom).offset(220) // 상단 스택과 간격
+            $0.leading.trailing.equalToSuperview().inset(25)
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
         timeStack.snp.makeConstraints {
@@ -110,8 +124,8 @@ class CustomWeatherInfoView: UIView {
             headerStack.addArrangedSubview($0)
         }
         // 라벨 간 간격 지정
-        headerStack.setCustomSpacing(10, after: titleLabel)
-        headerStack.setCustomSpacing(10, after: locationStatusLabel)
+//        headerStack.setCustomSpacing(10, after: titleLabel)
+//        headerStack.setCustomSpacing(10, after: locationStatusLabel)
     }
     
     // 중단 정보 설정

@@ -1,4 +1,4 @@
-
+// CurrentWeatherAPI
 struct StadiumModel {
     let stadiumName: String
     let teamLogo: String
@@ -55,4 +55,14 @@ extension StadiumModel {
     static var empty: StadiumModel {
         StadiumModel(stadiumName: "", teamLogo: "", lat: 0.0, lon: 0.0, searchKeywords: [])
     }
+}
+
+struct ForecastResponse: Decodable {
+    let list: [ForecastItem]
+}
+
+struct ForecastItem: Decodable {
+    let dt: Int
+    let main: Main
+    let weather: [Weather]
 }
