@@ -23,7 +23,7 @@ class RiderDetailViewController: UIViewController {
         view.backgroundColor = .white
         setupUI()
         bind()
-        viewModel.fecthWeatherInfo()
+        viewModel.fetchWeatherInfo()
         viewModel.fetchAirQuality()
         //        setupContent()
     }

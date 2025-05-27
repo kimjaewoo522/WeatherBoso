@@ -71,8 +71,10 @@ final class RunnerCategoryViewController: UIViewController{
     private func bindCellTap() {
         collection.rx.modelSelected(RunningSpot.self)
             .withUnretained(self)
-            .bind { runningSpot in
+            .bind { owner, runningSpot in
                 let detailVC = RunnerDetailViewController()
+                detailVC.latitude = runningSpot.lat
+                detailVC.longitude = runningSpot.lon
                 self.navigationController?.pushViewController(detailVC, animated: true)
             }
             .disposed(by: disposeBag)
@@ -139,3 +141,11 @@ final class RunnerCategoryViewController: UIViewController{
     }
 }
 
+/* RunningSpot 모델에 위도와 경도 정보를 추가
+ 
+ -> RunnerCategoryViewModel에서 각 위치에 대한 데이터(lat,lon)를 포함해 생성
+ 
+ ->RunnerCategoryViewController에서 셀을 탭하면 해당 RunningSpot 객체가 선택,이때 runningSpot.lat, runningSpot.lon을 detailVC의 latitude, longitude에 직접 주입
+ ->RunnerDetailViewController에서는 전달받은 latitude, longitude를 기반으로 날씨와 대기질 API를 요청
+ ->RiderViewModel에서 실제 API 요청
+*/

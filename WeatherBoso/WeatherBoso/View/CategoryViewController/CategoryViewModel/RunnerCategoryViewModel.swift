@@ -45,7 +45,9 @@ final class RunnerCategoryViewModel {
                             name: location.name,
                             imageName: location.imageName,
                             temperature: "--",
-                            weatherStatus: "정보 없음"
+                            weatherStatus: "정보 없음",
+                            lat: location.lat,
+                            lon: location.lon
                         )
                     }
                     let temp = "\(Int(firstEntry.main.temp))℃"
@@ -54,7 +56,9 @@ final class RunnerCategoryViewModel {
                         name: location.name,
                         imageName: location.imageName,
                         temperature: temp,
-                        weatherStatus: weather
+                        weatherStatus: weather,
+                        lat: location.lat,
+                        lon: location.lon
                     )
                 }
         }

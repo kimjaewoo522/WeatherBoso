@@ -12,5 +12,6 @@ struct RunningSpot {
     let imageName: String
     let temperature: String
     let weatherStatus: String
-   
+    let lat: Double
+    let lon: Double
 }

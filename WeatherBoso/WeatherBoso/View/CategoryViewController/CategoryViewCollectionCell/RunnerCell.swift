@@ -53,8 +53,6 @@ class RunnerCell: UICollectionViewCell {
         
         locabg.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(90)
-
         }
         
         locaName.snp.makeConstraints {
@@ -79,8 +77,5 @@ class RunnerCell: UICollectionViewCell {
         tempLabel.text = runningSpot.temperature
         statusLabel.text = runningSpot.weatherStatus
     }
-    
-    
-    
 }
 

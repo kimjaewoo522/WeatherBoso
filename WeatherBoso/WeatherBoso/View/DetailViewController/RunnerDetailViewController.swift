@@ -3,9 +3,11 @@ import SnapKit
 import RxSwift
 
 final class RunnerDetailViewController: UIViewController {
+    var latitude: Double?
+    var longitude: Double?
     
     private let weatherInfoView = CustomWeatherInfoView()
-    private let viewModel = RiderViewModel()
+    private let viewModel = RunnerViewModel.shared
     private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -18,6 +20,7 @@ final class RunnerDetailViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(weatherInfoView)
+        print("위도: \(latitude ?? 0), 경도: \(longitude ?? 0)")
     }
 
     private func setupConstraints() {
@@ -27,8 +30,9 @@ final class RunnerDetailViewController: UIViewController {
     }
 
     private func configureWeatherView() {
-        viewModel.fecthWeatherInfo()
-        viewModel.fetchAirQuality()
+        guard let lat = latitude, let lon = longitude else { return }
+        viewModel.fetchWeatherInfo(lat: lat, lon: lon)
+        viewModel.fetchAirQuality(lat: lat, lon: lon)
         //combineLatest: 두 Observable이 emit할 때마다 가장 최신 값들을 함께 묶어 전달, nil을 제거한 유효값만 전달
         Observable
             .combineLatest(viewModel.nowWeather.compactMap { $0 }, viewModel.airPollutionResponse.compactMap { $0 })
