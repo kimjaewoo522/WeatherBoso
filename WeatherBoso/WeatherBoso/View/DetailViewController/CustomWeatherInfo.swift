@@ -75,8 +75,8 @@ class CustomWeatherInfoView: UIView {
         
         titleLabel.font = UIFont(name: "GmarketSansTTFBold", size: 58)
         
-        imageTitleLabal.font = UIFont(name: "GmarketSansTTFMedium", size: 18)
-        imageTitleLabal.textColor = .darkGray
+        imageTitleLabal.font = UIFont(name: "GmarketSansTTFLight", size: 17)
+        imageTitleLabal.textColor = .lightGray
         imageTitleLabal.textAlignment = .center
         
         locationStatusLabel.font = .systemFont(ofSize: 16)
@@ -93,15 +93,15 @@ class CustomWeatherInfoView: UIView {
             $0.width.height.equalTo(200)
         }
         imageTitleLabal.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(8)
-            $0.centerX.equalTo(imageView)
+            $0.top.equalTo(imageView.snp.bottom)
+            $0.centerX.equalToSuperview()
         }
         headerStack.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.leading.trailing.equalToSuperview().inset(15)
         }
         largeStack.snp.makeConstraints {
-            $0.top.equalTo(headerStack.snp.bottom).offset(200) // 상단 스택과 간격
+            $0.top.equalTo(headerStack.snp.bottom).offset(220) // 상단 스택과 간격
             $0.leading.trailing.equalToSuperview().inset(25)
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
