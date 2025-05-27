@@ -207,12 +207,12 @@ class RiderDetailViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
     }
     
-    
     //MARK: - 위치 관련
     func setLocation(lat: Double, lon: Double, locationName: String) {
         selectedLocationName = locationName
         viewModel.updateLocation(lat: lat, lon: lon)
     }
+    
     //실제 새로고침할 때 실행되는 함수 정의.
     @objc private func refreshData() {
         viewModel.fetchWeatherInfo()
@@ -225,3 +225,5 @@ class RiderDetailViewController: UIViewController {
         }
     }
 }
+
+

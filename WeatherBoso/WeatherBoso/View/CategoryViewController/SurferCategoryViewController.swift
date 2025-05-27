@@ -38,23 +38,11 @@ final class SurferCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
-        view.addSubview(collection)
-        view.addSubview(searchBar)
-        view.addSubview(customNavBar)
-        customNavBar.addSubview(backButton)
-
-        collection.register(SurferCell.self, forCellWithReuseIdentifier: String(describing: SurferCell.self))
-
+        setupUI()
         setConstraints()
         bindViewModel()
         bindCellTap()
-
-        backButton.rx.tap
-            .bind { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }
-            .disposed(by: disposeBag)
+        backButtonTapped()
         
     }
 
@@ -68,9 +56,35 @@ final class SurferCategoryViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        viewModel.fetchBeachSections()
+        // 1. SearchBar 입력을 ViewModel로 전달
+        searchBar.rx.text.orEmpty
+            .bind(to: viewModel.searchText)
+            .disposed(by: disposeBag)
+
+        // 2. ViewModel의 필터링된 섹션을 collectionView에 바인딩
+        viewModel.fetchFilteredBeachSections()
+            .observe(on: MainScheduler.instance)
             .bind(to: collection.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+    }
+    
+    private func backButtonTapped() {
+        backButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(collection)
+        view.addSubview(searchBar)
+        view.addSubview(customNavBar)
+        customNavBar.addSubview(backButton)
+        collection.register(SurferCell.self, forCellWithReuseIdentifier: String(describing: SurferCell.self))
+        collection.showsVerticalScrollIndicator = false
+
     }
 
     private func setConstraints() {
