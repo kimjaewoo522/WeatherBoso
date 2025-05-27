@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxGesture
 
 final class SurferDetailViewController: UIViewController {
     
@@ -19,16 +20,26 @@ final class SurferDetailViewController: UIViewController {
         self.viewModel = SurferDetailViewModel(latitude: latitude, longitude: longitude)
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
         bindRefreshControl()
+        setupSwipeGesture()
+    }
+    
+    private func setupSwipeGesture() {
+        self.view.rx.swipeGesture(.right)
+            .when(.recognized)
+            .bind { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func setupUI() {
@@ -40,22 +51,22 @@ final class SurferDetailViewController: UIViewController {
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
-
+        
         containerView.snp.makeConstraints {
             $0.edges.width.equalToSuperview()
         }
-
+        
         customWeatherInfo.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
         
         scrollView.refreshControl = refreshControl
     }
-
+    
     private func bindRefreshControl() {
         refreshControl.rx.controlEvent(.valueChanged)
             .subscribe(onNext: { [weak self] in
@@ -75,7 +86,7 @@ final class SurferDetailViewController: UIViewController {
             .subscribe(onNext: { [weak self] weather in
                 self?.updateUI(with: weather)
                 self?.refreshControl.endRefreshing()
-                              
+                
             }, onError: { [weak self] error in
                 print("Error")
                 self?.refreshControl.endRefreshing()
@@ -87,7 +98,7 @@ final class SurferDetailViewController: UIViewController {
     private func bindViewModel() {
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
-
+        
         output.weather
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weather in
@@ -95,7 +106,7 @@ final class SurferDetailViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
-
+    
     private func updateUI(with weather: SurferWeather) {
         customWeatherInfo.makeHeaderStack(
             title: "파도보소",
@@ -144,10 +155,11 @@ final class SurferDetailViewController: UIViewController {
                 waveImage = "Surfing"
             }
             
-            return TimeWeatherInfo(time: timeString, imageSource: .local(named: waveImage), value: "\(height)m")
+            return TimeWeatherInfo(time: timeString, imageSource: WeatherImageSource.local(named: waveImage), value: "\(height)m")
+
         }
-                                     
-        
+       
         customWeatherInfo.makeTimeStack(data: waveTimeData)
     }
 }
+

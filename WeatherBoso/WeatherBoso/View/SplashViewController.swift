@@ -26,14 +26,8 @@ class SplashViewController: UIViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             let mainVC = MainViewController()
-            let nav = UINavigationController(rootViewController: mainVC)
-            nav.modalPresentationStyle = .fullScreen
-            nav.modalTransitionStyle = .crossDissolve
-            self.present(nav, animated: true)
-            
-            
+            self.navigationController?.pushViewController(mainVC, animated: true)
         }
-
     }
     
     private func setupUI() {
@@ -47,6 +41,4 @@ class SplashViewController: UIViewController {
             $0.width.equalToSuperview().multipliedBy(0.5)
         }
     }
-    
-    
 }

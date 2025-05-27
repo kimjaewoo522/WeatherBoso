@@ -113,3 +113,4 @@ final class AnglerCategoryViewController: UIViewController {
         return UICollectionViewCompositionalLayout(section: section)
     }
 }
+

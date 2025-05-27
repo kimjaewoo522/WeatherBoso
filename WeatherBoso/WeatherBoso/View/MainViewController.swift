@@ -99,6 +99,7 @@ final class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
 
+
     }
     
     override func viewDidLoad() {
