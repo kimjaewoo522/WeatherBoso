@@ -7,6 +7,9 @@ import RxDataSources
 final class AnglerCategoryViewController: UIViewController {
 
     private let searchBar = SearchBar()
+    private let viewModel = AnglerCategoryViewModel()
+    private let disposeBag = DisposeBag()
+    
     private let collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout())
     private let customNavBar = UIView()
     private let backButton: UIButton = {
@@ -20,9 +23,14 @@ final class AnglerCategoryViewController: UIViewController {
         button.tintColor = .black
         return button
     }()
-
-    private let viewModel = AnglerCategoryViewModel()
-    private let disposeBag = DisposeBag()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+  
 
     private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<AnglerSection>(
         configureCell: { _, collectionView, indexPath, item in
@@ -35,11 +43,13 @@ final class AnglerCategoryViewController: UIViewController {
         }
     )
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupBindings()
         viewModel.fetchAnglers()
+        
     }
 
     private func setupUI() {
@@ -47,6 +57,8 @@ final class AnglerCategoryViewController: UIViewController {
         view.addSubview(customNavBar)
         view.addSubview(searchBar)
         view.addSubview(collection)
+        view.addSubview(activityIndicator)
+        
         customNavBar.addSubview(backButton)
 
         collection.register(AnglerCell.self, forCellWithReuseIdentifier: AnglerCell.id)
@@ -72,6 +84,9 @@ final class AnglerCategoryViewController: UIViewController {
             $0.top.equalTo(searchBar.snp.bottom).offset(27)
             $0.leading.trailing.bottom.equalToSuperview().inset(23)
         }
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()            
+        }
     }
 
     private func setupBindings() {
@@ -90,6 +105,14 @@ final class AnglerCategoryViewController: UIViewController {
                 let detailVC = AnglerDetailViewController(angler: item)
                 self?.navigationController?.pushViewController(detailVC, animated: true)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] isLoading in
+                isLoading ? self?.activityIndicator.startAnimating():
+                self?.activityIndicator.stopAnimating()
+            }
             .disposed(by: disposeBag)
     }
 

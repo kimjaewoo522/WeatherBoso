@@ -27,13 +27,10 @@ class BaseBallViewModel {
         dt: 0
     )
     
-    init() {}
-    
     // 구장 정보로 초기에 로드되는 고정데이터
     var stadiumInfo: [StadiumModel] = BaseballStadiumData.all
     
     // 디스패치그룹 for 카테고리뷰
-    //
     func fetchAllStadiumWeather() {
         var updatedStadiums = Array(repeating: StadiumModel.empty, count: stadiumInfo.count)
         var weatherResponses: [WeatherResponse] = Array(
@@ -67,7 +64,7 @@ class BaseBallViewModel {
         }
         
         group.notify(queue: .main) {
-            print("모두 로딩 완료: \(updatedStadiums.count)개")
+           
             self.weatherPerDay.accept(updatedStadiums)
             self.categoryHomeScreen.accept(updatedStadiums) // 여기서 초기화 해줘야 초기 화면에 뜸
             
@@ -92,7 +89,6 @@ class BaseBallViewModel {
     }
     
     // 디테일뷰
-    
     func fetchcurrentWeather(for stadium: StadiumModel) {
         guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(stadium.lat)&lon=\(stadium.lon)&appid=82fa9d3fa33aaa4358ca085201f3a956&units=metric&lang=kr") else {
             return

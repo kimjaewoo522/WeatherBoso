@@ -7,6 +7,8 @@ import RxDataSources
 final class SurferCategoryViewController: UIViewController {
     
     private let searchBar = SearchBar()
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
+
     
     private let viewModel = SurferCategoryViewModel()
     private let disposeBag = DisposeBag()
@@ -43,6 +45,7 @@ final class SurferCategoryViewController: UIViewController {
         bindViewModel()
         bindCellTap()
         backButtonTapped()
+        bindIndicator()
         
     }
 
@@ -84,7 +87,23 @@ final class SurferCategoryViewController: UIViewController {
         customNavBar.addSubview(backButton)
         collection.register(SurferCell.self, forCellWithReuseIdentifier: String(describing: SurferCell.self))
         collection.showsVerticalScrollIndicator = false
+        view.addSubview(loadingIndicator)
+            loadingIndicator.center = view.center
+            loadingIndicator.hidesWhenStopped = true
 
+    }
+    
+    private func bindIndicator() {
+        viewModel.isLoading
+                .observe(on: MainScheduler.instance)
+                .bind { [weak self] isLoading in
+                    if isLoading {
+                        self?.loadingIndicator.startAnimating()
+                    } else {
+                        self?.loadingIndicator.stopAnimating()
+                    }
+                }
+                .disposed(by: disposeBag)
     }
 
     private func setConstraints() {

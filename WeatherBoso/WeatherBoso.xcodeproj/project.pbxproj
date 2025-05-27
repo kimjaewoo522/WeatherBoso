@@ -14,6 +14,7 @@
 		4C033DE02DDC333D00970DB1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DDF2DDC333D00970DB1 /* RxDataSources */; };
 		4C033DE22DDC346500970DB1 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DE12DDC346500970DB1 /* RxRelay */; };
 		4C033DE52DDC348A00970DB1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4C033DE42DDC348A00970DB1 /* Alamofire */; };
+		B8A6941E2DE5CC40000C9C22 /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = B8A6941D2DE5CC40000C9C22 /* RxGesture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -406,6 +407,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		B8A6941C2DE5CC40000C9C22 /* XCRemoteSwiftPackageReference "RxGesture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxGesture.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -443,6 +452,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C033DE32DDC348A00970DB1 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		B8A6941D2DE5CC40000C9C22 /* RxGesture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8A6941C2DE5CC40000C9C22 /* XCRemoteSwiftPackageReference "RxGesture" */;
+			productName = RxGesture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

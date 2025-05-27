@@ -24,7 +24,7 @@ struct TimeWeatherInfo {
 class CustomWeatherInfoView: UIView {
     
     private let titleLabel = UILabel()
-    private let imageTitleLabal = UILabel()
+    private let imageTitleLabel = UILabel()
     private let locationStatusLabel = UILabel()
     private let tempLabel = UILabel()
     private let imageView = UIImageView()
@@ -46,7 +46,7 @@ class CustomWeatherInfoView: UIView {
     func setImageTC(_ imageName: String, _ color: UIColor, title: String? = nil) {
         titleLabel.textColor = color
         imageView.image = UIImage(named: imageName)
-        imageTitleLabal.text = title
+        imageTitleLabel.text = title
     }
     
     private func setupUI() {
@@ -67,7 +67,7 @@ class CustomWeatherInfoView: UIView {
         addSubview(largeStack)
         addSubview(imageView)
         addSubview(timeStack)
-        addSubview(imageTitleLabal)
+        addSubview(imageTitleLabel)
 
         
         // 라벨 스타일 지정
@@ -75,9 +75,9 @@ class CustomWeatherInfoView: UIView {
         
         titleLabel.font = UIFont(name: "GmarketSansTTFBold", size: 58)
         
-        imageTitleLabal.font = UIFont(name: "GmarketSansTTFLight", size: 17)
-        imageTitleLabal.textColor = .lightGray
-        imageTitleLabal.textAlignment = .center
+        imageTitleLabel.font = UIFont(name: "GmarketSansTTFLight", size: 17)
+        imageTitleLabel.textColor = .lightGray
+        imageTitleLabel.textAlignment = .center
         
         locationStatusLabel.font = .systemFont(ofSize: 16)
         locationStatusLabel.textColor = .darkGray
@@ -92,8 +92,8 @@ class CustomWeatherInfoView: UIView {
             $0.trailing.equalToSuperview().inset(10)
             $0.width.height.equalTo(200)
         }
-        imageTitleLabal.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom)
+        imageTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(imageView.snp.bottom).offset(5)
             $0.centerX.equalToSuperview()
         }
         headerStack.snp.makeConstraints {
