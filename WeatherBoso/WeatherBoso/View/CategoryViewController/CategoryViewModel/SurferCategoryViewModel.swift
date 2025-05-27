@@ -11,7 +11,8 @@ import RxRelay
 
 final class SurferCategoryViewModel {
     private let weatherService = WeatherService()
-    
+    let isLoading = BehaviorRelay<Bool>(value: false)
+
     struct BeachLocation {
         let name: String
         let imageName: String
@@ -40,6 +41,7 @@ final class SurferCategoryViewModel {
             .distinctUntilChanged()
         // 최신 값만 처리, query는 현재 검색어
             .flatMapLatest { [unowned self] query -> Observable<[BeachSection]> in
+                self.isLoading.accept(true)
                 // 삼항 연산자
                 let filtered = query.isEmpty
                 ? beachList
@@ -63,7 +65,12 @@ final class SurferCategoryViewModel {
                 
                 return Observable.combineLatest(beachObservables)
                     .map { beaches in
-                        [BeachSection(items: beaches)]
+                        self.isLoading.accept(false)
+                        return [BeachSection(items: beaches)]
+                    }
+                    .catch { error in
+                        self.isLoading.accept(false)
+                                            return .just([])
                     }
             }
     }
