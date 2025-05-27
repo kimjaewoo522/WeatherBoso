@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 카테고리 더미데이터
 struct BaseballStadiumData {
     
     static let all: [StadiumModel] = [
