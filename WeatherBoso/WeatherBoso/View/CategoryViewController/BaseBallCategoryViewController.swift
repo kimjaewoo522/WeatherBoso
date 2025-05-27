@@ -13,7 +13,8 @@ import RxCocoa
 final class BaseBallCategoryViewController: UIViewController{
     
     private let searchBar = SearchBar()
-    
+    private let viewModel = BaseBallViewModel()
+    private var data: [StadiumModel] = []
     private let disposeBag = DisposeBag()
     lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
@@ -41,17 +42,21 @@ final class BaseBallCategoryViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.data = viewModel.stadiumInfo
         [collection, searchBar, customNavBar].forEach { view.addSubview($0) }
         customNavBar.addSubview(backButton)
         view.backgroundColor = .white
         setConst()
         
+        collection.register(BaseballCell.self, forCellWithReuseIdentifier: BaseballCell.id)
         backButton.rx.tap
             .bind { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
-        
+        bind()
+        viewModel.fetchAllStadiumWeather()
     }
     
     private func setConst() {
@@ -75,7 +80,8 @@ final class BaseBallCategoryViewController: UIViewController{
         
         collection.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(27)
-            $0.leading.trailing.equalToSuperview().inset(23)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(100)
         }
         
     }
@@ -89,12 +95,12 @@ final class BaseBallCategoryViewController: UIViewController{
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = .init(
-            top: 0, leading: 0,
-            bottom: 23, trailing: 0)
+            top: 10, leading: 7,
+            bottom: 13, trailing: 7)
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(90)
+            heightDimension: .estimated(110)
         )
         
         let group = NSCollectionLayoutGroup.vertical(
@@ -107,5 +113,39 @@ final class BaseBallCategoryViewController: UIViewController{
         return UICollectionViewCompositionalLayout(section: section)
     }
     
+    private func bind() {
+        // 컬렉션뷰 바인딩
+        viewModel.categoryHomeScreen
+            .bind(to: collection.rx.items(
+                cellIdentifier: BaseballCell.id,
+                cellType: BaseballCell.self
+            )) { index, model, cell in
+                cell.setData(with: model)
+            }
+            .disposed(by: disposeBag)
+        
+        // 디테일 화면으로 이동
+//        collection.rx.modelSelected(StadiumModel.self)
+//            .bind { [weak self] stadium in
+//                guard let self = self,
+//                      let weather = self.viewModel.weatherDict[stadium.stadiumName] else { return }
+//                
+//                let detailVC = BaseBallDetailViewController(stadium: stadium, weather: weather)
+//                self.navigationController?.pushViewController(detailVC, animated: true)
+//            }
+//            .disposed(by: disposeBag)
+        
+        
+        searchBar.rx.text.orEmpty
+            .distinctUntilChanged()
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .bind { [weak self] keyword in
+                self?.viewModel.searchStadiums(for: keyword)
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.categoryHomeScreen.accept(viewModel.weatherPerDay.value)
+        
+    }
 }
 
