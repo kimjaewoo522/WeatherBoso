@@ -85,22 +85,31 @@ final class RunnerCategoryViewController: UIViewController {
     private func bindSearchBar() {
         searchBar.rx.searchButtonClicked
             .withLatestFrom(searchBar.rx.text.orEmpty)
-            .flatMapLatest { query -> Observable<(latitude: String, longitude: String, address: String)> in
+            .flatMapLatest { query -> Observable<Event<(latitude: String, longitude: String, address: String)>> in
                 RunnerViewModel.shared.fetchCoordinates(for: query)
                     .asObservable()
-                    .catchAndReturn((latitude: "0", longitude: "0", address: "알 수 없음"))
+                    .materialize()
             }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] coord in
-                guard let self = self,
-                      let lat = Double(coord.latitude),
-                      let lon = Double(coord.longitude) else { return }
-                let detailVC = RunnerDetailViewController()
-                detailVC.latitude = lat
-                detailVC.longitude = lon
-                detailVC.locationName = coord.address
-                detailVC.isFromSearch = true
-                self.navigationController?.pushViewController(detailVC, animated: true)
+            .bind { [weak self] event in
+                guard let self = self else { return }
+                switch event {
+                case .next(let coord):
+                    guard let lat = Double(coord.latitude),
+                          let lon = Double(coord.longitude) else { return }
+                    let detailVC = RunnerDetailViewController()
+                    detailVC.latitude = lat
+                    detailVC.longitude = lon
+                    detailVC.locationName = coord.address
+                    detailVC.isFromSearch = true
+                    self.navigationController?.pushViewController(detailVC, animated: true)
+                case .error:
+                    let alert = UIAlertController(title: "오류", message: "주소를 찾을 수 없습니다. 다시 입력해 주세요.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self.present(alert, animated: true)
+                case .completed:
+                    break
+                }
             }
             .disposed(by: disposeBag)
     }
