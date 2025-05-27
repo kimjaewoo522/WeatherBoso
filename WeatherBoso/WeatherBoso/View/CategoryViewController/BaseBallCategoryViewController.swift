@@ -57,6 +57,7 @@ final class BaseBallCategoryViewController: UIViewController{
             .disposed(by: disposeBag)
         bind()
         viewModel.fetchAllStadiumWeather()
+        collection.showsVerticalScrollIndicator = false // 스크롤바 숨기기
     }
     
     private func setConst() {
@@ -135,10 +136,8 @@ final class BaseBallCategoryViewController: UIViewController{
             }
             .disposed(by: disposeBag)
         
-        // 검색필터
+        // 검색 환경 디테일
         searchBar.rx.text.orEmpty
-            .distinctUntilChanged()
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind { [weak self] keyword in
                 self?.viewModel.searchStadiums(for: keyword)
             }
