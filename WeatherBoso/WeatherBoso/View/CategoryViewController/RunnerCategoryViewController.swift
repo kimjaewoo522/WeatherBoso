@@ -9,13 +9,15 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 final class RunnerCategoryViewController: UIViewController{
     
     private let searchBar = SearchBar()
-    
+    private let viewModel = RunnerCategoryViewModel()
     private let disposeBag = DisposeBag()
-    lazy var collection = UICollectionView(
+    
+    private lazy var collection = UICollectionView(
         frame: .zero, collectionViewLayout: collectionSet()
     )
     
@@ -37,19 +39,50 @@ final class RunnerCategoryViewController: UIViewController{
         return button
     }()
     
-    
-    
+    private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<RunningSpotSection>(
+        configureCell: { _, collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: RunnerCell.self), for: indexPath) as? RunnerCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(with: item)
+            return cell
+        })
+
     override func viewDidLoad() {
         super.viewDidLoad()
         [collection, searchBar, customNavBar].forEach { view.addSubview($0) }
         customNavBar.addSubview(backButton)
         view.backgroundColor = .white
+        
+        collection.register(RunnerCell.self, forCellWithReuseIdentifier: String(describing: RunnerCell.self))
+        collection.showsVerticalScrollIndicator = false
+        
         setConst()
+        bindViewModel()
+        bindCellTap()
         
         backButton.rx.tap
             .bind { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindCellTap() {
+        collection.rx.modelSelected(RunningSpot.self)
+            .withUnretained(self)
+            .bind { owner, runningSpot in
+                let detailVC = RunnerDetailViewController()
+                detailVC.latitude = runningSpot.lat
+                detailVC.longitude = runningSpot.lon
+                self.navigationController?.pushViewController(detailVC, animated: true)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindViewModel() {
+        viewModel.fetchRunningSpotSections()
+            .bind(to: collection.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
     
@@ -75,6 +108,7 @@ final class RunnerCategoryViewController: UIViewController{
         collection.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(27)
             $0.leading.trailing.equalToSuperview().inset(23)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -87,12 +121,12 @@ final class RunnerCategoryViewController: UIViewController{
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = .init(
-            top: 0, leading: 0,
-            bottom: 23, trailing: 0)
+            top: 10, leading: 0,
+            bottom: 10, trailing: 0)
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(90)
+            heightDimension: .absolute(100)
         )
         
         let group = NSCollectionLayoutGroup.vertical(
@@ -101,8 +135,17 @@ final class RunnerCategoryViewController: UIViewController{
         )
         
         let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 10
         
         return UICollectionViewCompositionalLayout(section: section)
     }
 }
 
+/* RunningSpot 모델에 위도와 경도 정보를 추가
+ 
+ -> RunnerCategoryViewModel에서 각 위치에 대한 데이터(lat,lon)를 포함해 생성
+ 
+ ->RunnerCategoryViewController에서 셀을 탭하면 해당 RunningSpot 객체가 선택,이때 runningSpot.lat, runningSpot.lon을 detailVC의 latitude, longitude에 직접 주입
+ ->RunnerDetailViewController에서는 전달받은 latitude, longitude를 기반으로 날씨와 대기질 API를 요청
+ ->RiderViewModel에서 실제 API 요청
+*/
