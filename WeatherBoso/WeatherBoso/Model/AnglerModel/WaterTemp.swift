@@ -5,9 +5,13 @@ struct WaterTempResponse: Decodable {
 }
 
 struct WaterTempResult: Decodable {
-    let data: [WaterTempData]
+    let data: [WaterTempData]?
+    
+    enum CodingKeys: String, CodingKey {
+            case data
+        }
 }
-
+    
 struct WaterTempData: Decodable {
     let recordTime: String
     let waterTemp: String
