@@ -26,7 +26,7 @@ class NetworkManager {
             print("API 요청 시작: \(url.absoluteString)")
             let session = URLSession(configuration: .default)
             session.dataTask(with: URLRequest(url: url)) { data, response, error in
-                // error 가 있다면 Single 에 fail 방출.
+                // error WeatherResponse가 있다면 Single 에 fail 방출.
                 if let error = error {
                     print("통신 에러: \(error)")
                     observer(.failure(error))

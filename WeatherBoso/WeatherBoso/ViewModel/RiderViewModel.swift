@@ -5,7 +5,6 @@
 //  Created by 김재우 on 5/20/25.
 //
 
-
 import Foundation
 import RxSwift
 
@@ -25,6 +24,8 @@ class RiderViewModel {
     let airPollutionResponse = BehaviorSubject<AirPollutionData?>(value: nil)
     // 현재 날씨의 정보를 담는 Rx Subject
     let nowWeather = BehaviorSubject<WeatherEntry?>(value: nil)
+    
+    
     
     
     func fecthWeatherInfo () {
@@ -80,6 +81,14 @@ class RiderViewModel {
         // 그래서 비교 했을때 지금 시점과 가장 가까운 예보 1개를 리턴함.
         return list.min(by: {abs($0.dt - now) < abs($1.dt - now)})
     }
-}
     
-  
+    // 위도 경도 정보를 받으면 서버에 요청할 위도 경도 정보를 바꿔주는 함수
+    func updateLocation(lat: Double, lon: Double) {
+        self.lat = lat
+        self.lon = lon
+        
+        // 새 위치에 대해 API 다시 호출
+        fecthWeatherInfo()
+        fetchAirQuality()
+    }
+}
