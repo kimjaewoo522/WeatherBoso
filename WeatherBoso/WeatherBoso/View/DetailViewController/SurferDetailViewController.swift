@@ -15,6 +15,15 @@ final class SurferDetailViewController: UIViewController {
     private let beachName: String
     private var viewModel: SurferDetailViewModel!
     
+    private let unitToggleButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("🔄화씨", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return button
+    }()
+    private var isCelsius = true
+    
     init(name: String, latitude: Double, longitude: Double) {
         self.beachName = name
         self.viewModel = SurferDetailViewModel(latitude: latitude, longitude: longitude)
@@ -31,6 +40,7 @@ final class SurferDetailViewController: UIViewController {
         bindViewModel()
         bindRefreshControl()
         setupSwipeGesture()
+        bindUnitToggleButton()
     }
     
     private func setupSwipeGesture() {
@@ -41,28 +51,52 @@ final class SurferDetailViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
+    private func convertToFahrenheit(_ celsius: Double) -> Double {
+        return (celsius * 9 / 5) + 32
+    }
+    
+    private func bindUnitToggleButton() {
+        unitToggleButton.rx.tap
+            .bind { [weak self] in
+                guard let self = self else { return }
+                self.isCelsius.toggle()
+                
+                // 버튼 텍스트도 반대로 바꿔주기
+                let newTitle = self.isCelsius ? "🔄화씨" : "🔄섭씨"
+                self.unitToggleButton.setTitle(newTitle, for: .normal)
+                
+                self.reloadWeather()
+            }
+            .disposed(by: disposeBag)
+    }
     
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(scrollView)
-        scrollView.addSubview(containerView)
-        containerView.addSubview(customWeatherInfo)
-        
+        scrollView.addSubview(customWeatherInfo)
+//        containerView.addSubview(customWeatherInfo)
+        scrollView.addSubview(unitToggleButton)
+        scrollView.alwaysBounceVertical = true
+        scrollView.refreshControl = refreshControl
+
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
         
-        containerView.snp.makeConstraints {
-            $0.edges.equalTo(scrollView.contentLayoutGuide)
-            $0.width.equalTo(scrollView.frameLayoutGuide) // 세로 스크롤만 허용
+//        containerView.snp.makeConstraints {
+//            $0.edges.equalTo(scrollView.contentLayoutGuide)
+//            $0.width.equalTo(scrollView.frameLayoutGuide) // 세로 스크롤만 허용
+//        }
+        unitToggleButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(180)
+            make.leading.equalToSuperview().offset(39)
         }
-        
+
         customWeatherInfo.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.bottom.equalToSuperview().inset(20)
         }
         
-        scrollView.refreshControl = refreshControl
     }
     
     private func bindRefreshControl() {
@@ -106,10 +140,23 @@ final class SurferDetailViewController: UIViewController {
     }
     
     private func updateUI(with weather: SurferWeather) {
+        // 온도 단위 변환 처리
+        let displayTemp: String
+        if let tempDouble = Double(weather.temperature) {
+            if isCelsius {
+                displayTemp = String(format: "%.1f°C", tempDouble)
+            } else {
+                let fahrenheit = tempDouble * 9 / 5 + 32
+                displayTemp = String(format: "%.1f°F", fahrenheit)
+            }
+        } else {
+            displayTemp = weather.temperature // 변환 실패 시 원본 사용
+        }
+
         customWeatherInfo.makeHeaderStack(
             title: "파도보소",
             location: beachName,
-            temperature: "\(weather.temperature)°C",
+            temperature: displayTemp,
             status: weather.weatherCode
         )
         
@@ -126,7 +173,19 @@ final class SurferDetailViewController: UIViewController {
             imageName = "Surfing"
         }
         
-        customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1))
+        let titleName: String
+        switch waveHeight {
+        case ..<0.5:
+            titleName = "파도 보고 싶소"
+        case 0.5..<1.2:
+            titleName = "이야 파도 보소"
+        case 1.2...:
+            titleName = "옴마야 파도 보소"
+        default:
+            titleName = "이야 파도 보소"
+        }
+        customWeatherInfo.setImageTC(imageName, UIColor(red: 0.247, green: 0.518, blue: 0.576, alpha: 1),title: titleName)
+        
         
         customWeatherInfo.makeLargeStack(items: [
             WeatherData(title: "파도", value: "\(weather.waveHeight)m"),

@@ -63,6 +63,7 @@ class RiderDetailViewController: UIViewController {
                 let pm25 = self.airQualityStatus(for: pm25Value, type: .pm25)
                 let weatherStatusValue = String(weatherInfo?.main ?? "")
                 let weatherStatus = self.WeatherStatus(for: weatherStatusValue, type: .main)
+                let weatherStatusTitle = self.WeatherStatusTitle(for: weatherStatusValue, type: .main)
                 
                 print("대기질 components 확인: \(air.components)")
                 self.customWeatherInfo.makeLargeStack(items: [
@@ -71,7 +72,7 @@ class RiderDetailViewController: UIViewController {
                     WeatherData(title: "미세먼지", value: "\(pm10)"),
                     WeatherData(title: "초미세먼지", value: "\(pm25)")
                 ])
-                customWeatherInfo.setImageTC("\(weatherStatus)", .orange)
+                customWeatherInfo.setImageTC("\(weatherStatus)", .orange, title: "\(weatherStatusTitle)")
             }, onError: { error in
                 print("에러 발생: \(error)")
             })
@@ -141,17 +142,33 @@ class RiderDetailViewController: UIViewController {
         }
     }
     
+    private func WeatherStatusTitle(for value: String, type: WeatherType) -> String {
+        switch type {
+        case .main:
+            switch value {
+            case "Thunderstorm": return "빗길 운전 조심!!"
+            case "Drizzle": return "빗길 운전 조심!!"
+            case "Rain": return "빗길 운전 조심!!"
+            case "Snow": return "바닥이 많이 차갑소"
+            case "Atmosphere": return "빗길 운전 조심!!"
+            default: return "헬멧 꼭 쓰이소"
+            }
+        }
+    }
+    
     private func formattedTemp(_ temp: Double) -> String {
+        let button = toggleTempButton
         if isCelsius {
+            button.setTitle("🔄화씨", for: .normal)
             return "\(Int(temp))°C"
         } else {
             let f = (temp * 9/5) + 32
+            button.setTitle("🔄섭씨", for: .normal)
             return "\(Int(f))°F"
         }
     }
     private func updateTemperatureDisplay() {
         guard let weather = nowWeather else { return }
-        
         // 온도/상태 업데이트
         customWeatherInfo.makeHeaderStack(
             title: "달려보소",
@@ -159,7 +176,6 @@ class RiderDetailViewController: UIViewController {
             temperature: formattedTemp(weather.main.temp),
             status: weather.weather.first?.description ?? "정보 없음"
         )
-        
         // 시간별 예보도 다시 변환해서 업데이트
         guard let list = try? viewModel.weatherEntry.value() else { return }
         
