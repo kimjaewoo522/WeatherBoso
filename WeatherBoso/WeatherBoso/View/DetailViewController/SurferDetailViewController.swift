@@ -79,7 +79,6 @@ final class SurferDetailViewController: UIViewController {
         // just(())는 아무 값도 없지만 이벤트가 발생했다는 사실 그자체를 표현한 스트림
         let input = SurferDetailViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
-        
         output.weather
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weather in
