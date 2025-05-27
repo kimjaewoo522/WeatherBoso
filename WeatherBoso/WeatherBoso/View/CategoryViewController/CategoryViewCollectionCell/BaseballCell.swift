@@ -42,6 +42,11 @@ class BaseballCell: UICollectionViewCell {
         
         [locabg, locaName, tempLabel, statusLabel].forEach(
             {contentView.addSubview($0)})
+//        contentView.backgroundColor = .red
+        contentView.layer.cornerRadius = 15
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.black.cgColor
+        
         setConst()
     }
     
@@ -71,6 +76,14 @@ class BaseballCell: UICollectionViewCell {
         }
     }
     
-    
+    /// 배열 전체 필요한 것이 아닌 값을 하나만 받아오도록
+    ///  why? 컬렉션뷰는 인덱스패스 순서대로 호출되는 ..
+    func setData(with location: StadiumModel) {
+        
+        locaName.text = location.stadiumName
+        locabg.image = UIImage(named: location.teamLogo)
+        tempLabel.text = location.temp ?? ""
+        statusLabel.text = location.description ?? ""
+    }
     
 }

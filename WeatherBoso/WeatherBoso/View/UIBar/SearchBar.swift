@@ -29,12 +29,7 @@ class SearchBar: UISearchBar {
         self.placeholder = "어디 타소?"
         self.setImage(UIImage(systemName: "magnifyingglass"),
                       for: .search, state: .normal)
-        
-        
-    // 커스텀
-//        searchTextField.layer.cornerRadius = 20
-//        searchTextField.layer.borderWidth = 1
-        
+       
         searchTextField.layer.borderColor = UIColor.black.cgColor
         searchTextField.font = UIFont(
             name: "GmarketSansTTFLight", size: 20)
