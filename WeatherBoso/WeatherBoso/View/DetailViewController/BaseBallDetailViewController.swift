@@ -129,7 +129,6 @@ class BaseBallDetailViewController: UIViewController {
         viewModel.weatherPerHour
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] timeData in
-                print("바인딩 완료: \(timeData.count)")
                 self?.detailCustomView.makeTimeStack(data: timeData)
             })
             .disposed(by: disposeBag)

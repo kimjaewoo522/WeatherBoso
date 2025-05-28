@@ -105,7 +105,6 @@ class BaseBallViewModel {
     }
     
     func fetchWeatherPerHour(for stadium: StadiumModel) {
-        print("함수 작동 성공")
         guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(stadium.lat)&lon=\(stadium.lon)&appid=82fa9d3fa33aaa4358ca085201f3a956&units=metric&lang=kr") else {
             
             return
