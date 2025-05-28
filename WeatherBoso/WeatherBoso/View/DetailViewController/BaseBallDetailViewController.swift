@@ -139,7 +139,6 @@ class BaseBallDetailViewController: UIViewController {
                 guard let self = self else { return }
                 self.isCelsius.toggle()
                 self.updateTemperatureDisplay()
-                updateTemperatureDisplay()
             }
             .disposed(by: disposeBag)
         
@@ -179,6 +178,7 @@ class BaseBallDetailViewController: UIViewController {
             
             let iconCode = entry.weather.first?.icon ?? "01d"
             let temp = formattedTemp(entry.main.temp)
+            
             
             return TimeWeatherInfo(time: time, imageSource: .url(iconCode: iconCode), value: temp)
         }
