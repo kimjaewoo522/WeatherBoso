@@ -115,7 +115,6 @@ final class AnglerCategoryViewModel {
                     )
                 }
                 .catch { error in
-                    print("\(location.name) 실패:", error)
                     return Observable.empty() // 해당 지역 무시
                 }
         }
@@ -129,7 +128,6 @@ final class AnglerCategoryViewModel {
                 self?.anglerSections.accept([section])
                 self?.isLoading.accept(false)
             }, onError: { error in
-                print("일부 지역만 반영되었습니다:", error)
                 self.isLoading.accept(false)
             })
             .disposed(by: disposeBag)

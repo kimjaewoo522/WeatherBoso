@@ -64,8 +64,6 @@ class RiderDetailViewController: UIViewController {
                 let weatherStatusValue = String(weatherInfo?.main ?? "")
                 let weatherStatus = self.WeatherStatus(for: weatherStatusValue, type: .main)
                 let weatherStatusTitle = self.WeatherStatusTitle(for: weatherStatusValue, type: .main)
-                
-                print("대기질 components 확인: \(air.components)")
                 self.customWeatherInfo.makeLargeStack(items: [
                     WeatherData(title: "가시거리", value: "\((weather.visibility) / 1000 )km"),
                     WeatherData(title: "풍속", value: String(format: "%.1f m/s", weather.wind.speed)),
@@ -74,7 +72,6 @@ class RiderDetailViewController: UIViewController {
                 ])
                 customWeatherInfo.setImageTC("\(weatherStatus)", .orange, title: "\(weatherStatusTitle)")
             }, onError: { error in
-                print("에러 발생: \(error)")
             })
             .disposed(by: disposeBag)
         
