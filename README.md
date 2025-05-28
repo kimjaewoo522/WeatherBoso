@@ -73,3 +73,81 @@ WeatherBoso는 야외 활동(런닝, 서핑, 야구, 낚시, 라이딩 등)을 �
 5. **라이딩**
 - 등록된 라이딩 코스에 대한 날씨, 온도, 미세먼지 , 초미세먼지, 풍속, 시간 별 날씨 정보를 확인 할 수 있습니다.
 날씨 정보를 확인하고 싶은 주소를 입력하여 그 지역에 대한 날씨 정보를 확인 할 수 있습니다.
+
+## 📁 WeatherBoso 프로젝트 디렉토리 구조
+
+```
+📁 WeatherBoso
+├── App
+│   ├── AppDelegate.swift
+│   └── SceneDelegate.swift
+│
+├── Common
+│   ├── GeocodingNetworkManager.swift
+│   ├── NetworkManager.swift
+│   └── WeatherService.swift
+│
+├── Model
+│   ├── AnglerModel/
+│   ├── BaseBallModel.swift
+│   ├── BaseballStadiumData.swift
+│   ├── RiderModel.swift
+│   ├── RunnerModel.swift
+│   └── SurferModel.swift
+│
+├── Resources
+│   ├── Fonts/
+│   ├── Assets.xcassets
+│   └── Info.plist
+│
+├── Secret
+│   └── Secret.swift
+│
+├── View
+│   ├── CategoryViewController
+│   │   ├── CategoryViewCollectionCell
+│   │   │   ├── AnglerCell.swift
+│   │   │   ├── BaseballCell.swift
+│   │   │   ├── RiderCell.swift
+│   │   │   ├── RunnerCell.swift
+│   │   │   └── SurferCell.swift
+│   │   ├── CategoryViewModel
+│   │   │   ├── AnglerCategoryViewModel.swift
+│   │   │   ├── RunnerCategoryViewModel.swift
+│   │   │   └── SurferCategoryViewModel.swift
+│   │   ├── CellModel
+│   │   │   ├── Angler.swift
+│   │   │   ├── Beach.swift
+│   │   │   └── RunningSpot.swift
+│   │   └── SectionModel
+│   │       ├── AnglerSection.swift
+│   │       ├── BeachSection.swift
+│   │       └── RunningSpotSection.swift
+│   ├── AnglerCategoryViewController.swift
+│   ├── BaseBallCategoryViewController.swift
+│   ├── RiderCategoryViewController.swift
+│   ├── RunnerCategoryViewController.swift
+│   └── SurferCategoryViewController.swift
+│
+├── DetailViewController
+│   ├── AnglerDetailViewController.swift
+│   ├── BaseBallDetailViewController.swift
+│   ├── CustomWeatherInfo.swift
+│   ├── RiderDetailViewController.swift
+│   ├── RunnerDetailViewController.swift
+│   └── SurferDetailViewController.swift
+│
+├── UIBar
+│   └── SearchBar.swift
+│
+├── LaunchScreen
+│   ├── MainViewController.swift
+│   └── SplashViewController.swift
+│
+└── ViewModel
+    ├── AnglerViewModel.swift
+    ├── BaseBallViewModel.swift
+    ├── RiderViewModel.swift
+    ├── RunnerViewModel.swift
+    └── SurferViewModel.swift
+```
