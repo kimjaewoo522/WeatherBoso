@@ -17,6 +17,8 @@ class BaseBallViewModel {
     var weatherDict: [String: WeatherResponse] = [:]
     let weatherPerHour = BehaviorRelay<[TimeWeatherInfo]>(value: [])
     let currentWeather = BehaviorRelay<WeatherResponse?>(value: nil)
+    let weatherRawList = BehaviorRelay<[ForecastItem]>(value: [])
+
     
     let dummyWeather = WeatherResponse(
         weather: [Weather(description: "정보 없음", icon: "")],
