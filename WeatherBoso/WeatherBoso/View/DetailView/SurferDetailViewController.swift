@@ -120,7 +120,6 @@ final class SurferDetailViewController: UIViewController {
                 self?.refreshControl.endRefreshing()
                 
             }, onError: { [weak self] error in
-                print("Error")
                 self?.refreshControl.endRefreshing()
                 
             })
