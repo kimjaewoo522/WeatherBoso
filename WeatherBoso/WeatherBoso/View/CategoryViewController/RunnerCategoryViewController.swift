@@ -11,7 +11,11 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+// MARK: - 러너 카테고리 화면
+
 final class RunnerCategoryViewController: UIViewController {
+
+    // MARK: - UI 컴포넌트 정의
 
     private let searchBar = SearchBar()
     private let viewModel = RunnerCategoryViewModel()
@@ -38,6 +42,8 @@ final class RunnerCategoryViewController: UIViewController {
         return button
     }()
 
+    // MARK: - 콜렉션 뷰 데이터소스
+
     private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<RunningSpotSection>(
         configureCell: { _, collectionView, indexPath, item in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: RunnerCell.self), for: indexPath) as? RunnerCell else {
@@ -49,6 +55,7 @@ final class RunnerCategoryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         [collection, searchBar, customNavBar].forEach { view.addSubview($0) }
         customNavBar.addSubview(backButton)
         view.backgroundColor = .white
@@ -61,12 +68,15 @@ final class RunnerCategoryViewController: UIViewController {
         bindCellTap()
         bindSearchBar()
 
+        // 뒤로 가기 버튼 액션
         backButton.rx.tap
             .bind { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
     }
+
+    // MARK: - 셀 선택 시 액션
 
     private func bindCellTap() {
         collection.rx.modelSelected(RunningSpot.self)
@@ -77,10 +87,12 @@ final class RunnerCategoryViewController: UIViewController {
                 detailVC.longitude = runningSpot.lon
                 detailVC.locationName = runningSpot.name
                 detailVC.isFromSearch = false
-                self.navigationController?.pushViewController(detailVC, animated: true)
+                owner.navigationController?.pushViewController(detailVC, animated: true)
             }
             .disposed(by: disposeBag)
     }
+
+    // MARK: - 검색바 검색 처리
 
     private func bindSearchBar() {
         searchBar.rx.searchButtonClicked
@@ -114,11 +126,15 @@ final class RunnerCategoryViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
+    // MARK: - 러닝 스팟 데이터 바인딩
+
     private func bindViewModel() {
         viewModel.fetchRunningSpotSections()
             .bind(to: collection.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
+
+    // MARK: - 레이아웃 제약 설정
 
     private func setConstraints() {
         customNavBar.snp.makeConstraints {
@@ -144,6 +160,8 @@ final class RunnerCategoryViewController: UIViewController {
             $0.bottom.equalToSuperview()
         }
     }
+
+    // MARK: - 콜렉션 뷰 레이아웃 구성
 
     private func collectionSet() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(
