@@ -110,10 +110,10 @@ class BaseBallViewModel {
             
             return
         }
-        print("url 생성 성공")
         
         NetworkManager.shared.fetch(url: url)
             .subscribe(onSuccess: { (response: ForecastResponse) in
+                self.weatherRawList.accept(response.list)
                 
                 let formatter = DateFormatter()
                 formatter.dateFormat = "HH:mm"
